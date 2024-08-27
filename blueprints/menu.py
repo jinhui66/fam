@@ -25,7 +25,7 @@ def menu():
 
 @bp.route('/login',methods=['GET','POST'])
 def login():
-    return render_template('menu/login.html')
+    return render_template('login.html')
 
 
 @bp.route('/login_action',methods=['GET','POST'])

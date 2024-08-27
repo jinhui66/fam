@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>HDU二手物品交易网</title>
+    <link rel="stylesheet" href="./static/common/layui/css/layui.css">
+    <link rel="stylesheet" href="./static/admin/css/style.css">
+    <script src="./static/common/layui/layui.js"></script>
+    <script src="./static/common/jquery-3.3.1.min.js"></script>
+    <script src="./static/common/vue.min.js"></script>
+    <style>
+        .right h2{
+            margin: 10px 0;
+        }
+        .right li{
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!--顶栏-->
+    <header>
+        <h2 v-text="webname"></h2>
+        <div class="breadcrumb">
+            <i class="layui-icon">&#xe715;</i>
+            <ul>
+                <li v-for="vo in address">
+                    <a  v-text="vo.name" :href="vo.url" ></a> <span>/</span>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="main" id="app">
+        <!--左栏-->
+        <div class="left">
+            <ul class="cl" >
+                <!--顶级分类-->
+                <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
+                    <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)">
+                        <i class="layui-icon" v-html="vo.icon"></i>
+                        <span v-text="vo.name"></span>
+                        <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active" class="layui-icon active">&#xe623;</i>
+                    </a>
+                    <!--子级分类-->
+                    <div v-for="vo2,index2 in vo.list">
+                        <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)" v-text="vo2.name"></a>
+                        <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!--右侧-->
+        <div class="right">
+            <blockquote class="layui-elem-quote">
+                <h2>二手交易网</h2>
+                <p>数据库系统原理课程设计期末作业</p>
+                <p>组长：楼金辉   组员：叶汛涛，张泽灏，孔皓宇</p>
+            </blockquote>
+
+            <div class="layui-row">
+                <div class="layui-col-md4">
+                    <div class="layui-card">
+                        <div class="layui-card-header"><h2>项目描述</h2></div>
+                        <div class="layui-card-body" style="height: 250px;">
+                            <ul>
+                                <li>该二手交易平台是一个线上市场，让用户可以买卖已经使用过的商品。
+                                    这个平台提供了一个方便、安全的渠道，让买家和卖家能够轻松地交易各种二手物品，
+                                    包括服装、电子产品、家居用品、书籍、玩具等等。
+                                    在这个平台上，卖家可以轻松地发布他们的商品信息，
+                                    包括商品描述、价格、照片等。
+                                    他们可以根据需要随时更新或删除商品信息。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md4">
+                    <div class="layui-card">
+                        <div class="layui-card-header"><h2>买卖规则</h2></div>
+                        <div class="layui-card-body" style="height: 250px;">
+                            <ul>
+                                <li>卖家也可以与潜在买家进行交流和谈判，以便更好地达成交易。
+                                    对于买家来说，二手交易平台提供了一个广泛的选择范围，
+                                    他们可以根据自己的需求和预算，筛选和浏览各种商品。
+                                    买家还可以通过平台的搜索功能，快速找到他们想要的商品。
+                                    此外，买家还可以查看卖家的评价和信誉，以确保交易的可靠性。
+                                    二手交易平台还提供了一系列的安全保障措施，以保护买卖双方的权益。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-col-md4">
+
+                    <div class="layui-card">
+                        <div class="layui-card-header"><h2>平台优势</h2></div>
+                        <div class="layui-card-body" style="height: 250px;">
+                            <ul>
+                                <li>平台提供保障，确保买家在确认收货后，卖家的款项才会释放。
+                                    同时，平台也提供了纠纷解决机制，以解决交易过程中可能出现的争议。
+                                    总之，二手交易平台为用户提供了便利、安全和可靠的交易环境，
+                                    让用户能够轻松地买卖二手物品，实现资源的再利用和节约。</li>
+                                <li>...</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <td><img src="./static/admin/img/img.png" width="1700" height="600px"/></td>
+
+            </div>
+
+            <div class="layui-row">
+                <div class="layui-col-md9" style="padding-right: 20px">
+                    <table class="layui-table layui-form">
+                        <thead>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="layui-col-md3">
+                    <table class="layui-table layui-form">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./static/admin/js/config.js"></script>
+<script src="./static/admin/js/script.js"></script>
+<script type="text/javascript">
+
+    //模拟登录状态,实际使用时请删除掉
+    if(!sessionStorage.isLgoin){
+        window.location.href = 'login.html';
+    }
+</script>
+</body>
+</html>
