@@ -15,11 +15,11 @@ bp = Blueprint('menu',__name__,url_prefix="/")
 def menu():
     print(session.get('user_id'))
     if not session.get('user_id'):
-        return redirect('login.html')
+        return redirect('login')
     else:
         return render_template('index.html')
 
-@bp.route('/login.html',methods=['GET','POST'])
+@bp.route('/login',methods=['GET','POST'])
 def login():
     return render_template('login.html')
 
@@ -51,12 +51,12 @@ def login_action():
         return jsonify({'status':'', 'message':'账号或密码错误'})
 
 
-@bp.route('/out.html',methods=['GET','POST'])
+@bp.route('/out',methods=['GET','POST'])
 def logout():
     session.clear()
-    return redirect('/login.html')
+    return redirect('/login')
 
-@bp.route('/register.html',methods=['GET','POST'])
+@bp.route('/register',methods=['GET','POST'])
 def register():
     return render_template('register.html')
 
@@ -133,5 +133,3 @@ def forgot_password_action():
                     break
                 print(error)
             return jsonify({'status': '','message':error})
-
-

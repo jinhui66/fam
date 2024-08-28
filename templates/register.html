@@ -12,14 +12,10 @@
 
     <script >    function myFunction()
 {
-       window.location.href = 'login.html';
+       window.location.href = 'login';
 }</script>
 </head>
 <body id="login">
-
-<div class = "register" style="text-indent:420px;font-size:15px;" >家庭记账  <button type="button" class="layui-btn layui-btn-sm" style="margin-left: 500px;">
-    <i class="layui-icon layui-icon-right"></i>
-  </button></div>
 
 <div class="register1" style  = "border-bottom-style:solid;border-width:3px;border-color:red;line-height: 50px;">  <h2 style="text-indent:0px;">QAdmin后台模板
     <span style="font-size:14px;margin-left: 230px; " >已有账号，去登录</span>
@@ -47,9 +43,9 @@
         <br>
 
         <div class="layui-form-item">
-                <input type="text" class="form-control" name="captcha" id="captcha" required>
+                <input type="text" class="layui-input" name="captcha" id="captcha" required >
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="captcha-btn">获取验证码</button>
+                    <i class="layui-icon input-icon">&#xe679; <button class="btn btn-outline-secondary" type="button" id="captcha-btn">获取验证码</button></i>
                 </div>
         </div>
         <!-- 注册按钮 -->
@@ -84,7 +80,7 @@
                 if (data.status == 'success') {
                 // 登录成功，跳转到menu.html
                 alert(data.message);
-                window.location.href = '/login.html';
+                window.location.href = '/login';
                 } else {
                 alert(data.message);
                 }
