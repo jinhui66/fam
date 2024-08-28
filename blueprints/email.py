@@ -10,13 +10,14 @@ from exts import db
 
 bp = Blueprint('email',__name__,url_prefix="/")
 
+
 @bp.route('/captcha/email',methods=['GET','POST'])
 def get_email_captcha():
     email = request.args.get('email')
     source = string.digits*4
     captcha = random.sample(source,4)
     captcha = "".join(captcha)
-    message = Message(subject='注册验证码',recipients=[email],body=f'您的注册验证码是:{captcha},请勿告知他人!')
+    message = Message(subject='验证码',recipients=[email],body=f'您的验证码是:{captcha},请勿告知他人!')
     mail.send(message)
     sql = text('insert into EMAIL_CAPTCHA(ECaccount,ECcaptcha) value(:email, :captcha)')
     db.session.execute(sql,{'email':email, 'captcha': captcha})
