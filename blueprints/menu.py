@@ -4,8 +4,6 @@ from sqlalchemy import text
 from exts import db
 import hashlib
 import json
-from models.forms import RegisterForm,LoginForm,ForgotForm
-# from models.table import User, Admin
 import os
 import time
 
@@ -71,7 +69,7 @@ def register_action():
         password2 = data.get('password2')
         captcha = data.get('captcha')
 
-        if not account or not password or not password2:
+        if not account or not password or not password2 or not captcha:
             return jsonify({'status':'', 'message':'请填写完整'})
         # 条件判断
         sql = text('select * from USER where Uaccount = :account')
@@ -82,6 +80,16 @@ def register_action():
             return jsonify({'status': '', 'message': '两次密码不一致'})
         else:
             # 调用存储过程
+            with db.engine.connect() as connection:
+            # 调用存储过程
+                connection.execute(text("CALL COMPARE_CAPTCHA(:account, :captcha, @is_true);"), {'account':account, 'captcha':captcha})
+                # 检查会话变量 @is_true
+                captcha_model = connection.execute(text("SELECT @is_true;")).fetchone()
+                print(captcha_model[0])
+
+                if captcha_model[0] == 0:
+                    return jsonify({'status': '', 'message': '验证码错误'})
+                connection.commit()
 
             sql = text('insert into USER(Uaccount,Upassword) value(:account, :password)')
             db.session.execute(sql, {'account': account, 'password':password})
@@ -89,47 +97,56 @@ def register_action():
             return jsonify({'status': 'success', 'message': '注册成功'})
 
 
-@bp.route('/forgot_password',methods=['GET','POST'])
-def forgot_password():
-    return render_template('menu/forgot_password.html')
+@bp.route('/forget',methods=['GET','POST'])
+def forget():
+    return render_template('forget.html')
 
-@bp.route('/forgot_password_action',methods=['GET','POST'])
-def forgot_password_action():
+@bp.route('/forget_action',methods=['GET','POST'])
+def forget_action():
     if request.method == 'GET':
         pass
     else: # post
-        form = ForgotForm(request.form)
-        if form.validate():
-            email = form.email.data
-            password = form.password.data
-            sql_user = text('SELECT * FROM User WHERE email = :email')
-            get_user = db.session.execute(sql_user, {'email': email}).fetchone()
+        data = request.get_json()
+        account = data.get('account')
+        password = data.get('password')
+        password2 = data.get('password2')
+        captcha = data.get('captcha')
 
-            sql_admin = text('SELECT * FROM Admin WHERE email = :email')
-            get_admin = db.session.execute(sql_admin, {'email': email}).fetchone()
-
-            if get_user:
-                # get_user = User.query.filter_by(email=email).first()
-                # get_user.user_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-                sql = text('update User set user_password = :user_password where email = :email')
-                db.session.execute(sql, {'user_password':hashlib.sha256(password.encode('utf-8')).hexdigest(), 'email': email})
-                db.session.commit()
-            elif get_admin:
-                # get_user = Admin.query.filter_by(email=email).first()
-                # get_user.admin_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-                sql = text('update Admin set admin_password = :admin_password where email = :email')
-                db.session.execute(sql, {'admin_password':hashlib.sha256(password.encode('utf-8')).hexdigest(), 'email': email})
-                db.session.commit()
-
-            session.clear()
-            return jsonify({'status':'success', 'message':''})
+        if not account or not password or not password2 or not captcha:
+            return jsonify({'status':'', 'message':'请填写完整'})
+        # 条件判断
+        sql = text('select * from USER where Uaccount = :account')
+        is_same = db.session.execute(sql, {'account': account}).fetchone()
+        if not is_same:
+            return jsonify({'status': '', 'message': '账号未注册'})
+        elif password != password2:
+            return jsonify({'status': '', 'message': '两次密码不一致'})
         else:
-            for field, errors in form.errors.items():
-                # errors 是一个列表，包含该字段的所有错误消息
-                if errors:
-                #     # 打印第一个错误消息
-                    error = errors[0]
-                    print(f"{field} 的第一个错误是: {errors[0]}")
-                    break
-                print(error)
-            return jsonify({'status': '','message':error})
+            # 调用存储过程
+            with db.engine.connect() as connection:
+            # 调用存储过程
+                connection.execute(text("call COMPARE_CAPTCHA(:account, :captcha, @is_true);"), {'account':account, 'captcha':captcha})
+                # 检查会话变量 @is_true
+                captcha_model = connection.execute(text("SELECT @is_true;")).fetchone()
+                print(captcha_model[0])
+
+                if captcha_model[0] == 0:
+                    return jsonify({'status': '', 'message': '验证码错误'})
+
+                connection.execute(text('update USER set Upassword = :password where Uaccount = :account'), {'password': password, 'account':account})
+
+                connection.commit()
+
+
+        session.clear()
+        return jsonify({'status':'success', 'message':'修改成功'})
+        # else:
+        #     for field, errors in form.errors.items():
+        #         # errors 是一个列表，包含该字段的所有错误消息
+        #         if errors:
+        #         #     # 打印第一个错误消息
+        #             error = errors[0]
+        #             print(f"{field} 的第一个错误是: {errors[0]}")
+        #             break
+        #         print(error)
+        #     return jsonify({'status': '','message':error})
