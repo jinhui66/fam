@@ -35,7 +35,7 @@ def my_before_request():
     id = session.get('user_id')
     if id:
         # user = User.query.filter_by(user_id=id).first()
-        sql = text('SELECT * FROM USER WHERE IDUSER = :id')
+        sql = text('SELECT * FROM USER WHERE Uid = :id')
         user = db.session.execute(sql, {'id': id}).fetchone()
         setattr(g,'user',user)
     else:

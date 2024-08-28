@@ -38,14 +38,14 @@ def login_action():
         # print(account,password,1221212)
         # get_user = User.query.filter_by(email=email).first()
         # 使用原生SQL查询数据
-        sql = text('SELECT * FROM USER WHERE ACCOUNT = :account')
+        sql = text('SELECT * FROM USER WHERE Uaccount = :account')
         get_user = db.session.execute(sql, {'account': account}).fetchone()
         print(2)
         if get_user is not None:
-            session['user_id'] = get_user.IDUSER
+            session['user_id'] = get_user.Uid
             # password = hashlib.sha256(password.encode('utf-8')).hexdigest()
             print(password)
-            if(get_user.PASSWORD == password):
+            if(get_user.Upassword == password):
                 print('success')
                 return jsonify({'status':'success', 'message':''})
         return jsonify({'status':'', 'message':'账号或密码错误'})
@@ -73,14 +73,14 @@ def register_action():
         if not account or not password or not password2:
             return jsonify({'status':'', 'message':'请填写完整'})
         # 条件判断
-        sql = text('select * from USER where ACCOUNT = :account')
+        sql = text('select * from USER where Uaccount = :account')
         is_same = db.session.execute(sql, {'account': account}).fetchone()
         if is_same:
             return jsonify({'status': '', 'message': '账号已被注册'})
         elif password != password2:
             return jsonify({'status': '', 'message': '两次密码不一致'})
         else:
-            sql = text('insert into USER(ACCOUNT,PASSWORD) value(:account, :password)')
+            sql = text('insert into USER(Uaccount,Upassword) value(:account, :password)')
             db.session.execute(sql, {'account': account, 'password':password})
             db.session.commit()
             return jsonify({'status': 'success', 'message': '注册成功'})
