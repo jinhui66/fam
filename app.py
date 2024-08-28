@@ -6,6 +6,7 @@ import os
 from blueprints.menu import bp as menu_bp
 from blueprints.email import bp as email_bp
 from sqlalchemy import text
+from config import host, port
 
 # 启动
 app = Flask(__name__)
@@ -46,4 +47,4 @@ def my_context_porcessor():
     return {'user':g.user}
 
 if __name__ == '__main__':
-    app.run(debug=True,host='127.0.0.1')
+    app.run(debug=True,host=host, port=port)
