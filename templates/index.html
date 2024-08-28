@@ -45,7 +45,7 @@
             <ul class="cl" >
                 <!--顶级分类-->
                 <li v-for="vo,index in menu" :class="{hidden:vo.hidden}">
-                    <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)">
+                    <a href="javascript:;" :class="{active:vo.active}" @click="onActive(index)" >
                         <i class="layui-icon" v-html="vo.icon"></i>
                         <span v-text="vo.name"></span>
                         <i class="layui-icon arrow" v-show="vo.url.length==0">&#xe61a;</i> <i v-show="vo.active" class="layui-icon active">&#xe623;</i>
@@ -71,7 +71,7 @@
     let menu = [{
         "name": "首页",
         "icon": "&#xe68e;",
-        "url": "login.html",
+        "url": "/",
         "hidden": false,
         "list": []
     },{

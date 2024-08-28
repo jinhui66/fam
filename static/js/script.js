@@ -62,6 +62,7 @@ var vue = new Vue({
                     }
 
                 }else{
+                    // alert(data.url);
                     window.location.href = data.url;
                 }
 

@@ -69,6 +69,7 @@ def register_action():
         account = data.get('account')
         password = data.get('password')
         password2 = data.get('password2')
+        captcha = data.get('captcha')
 
         if not account or not password or not password2:
             return jsonify({'status':'', 'message':'请填写完整'})
@@ -80,6 +81,8 @@ def register_action():
         elif password != password2:
             return jsonify({'status': '', 'message': '两次密码不一致'})
         else:
+            # 调用存储过程
+
             sql = text('insert into USER(Uaccount,Upassword) value(:account, :password)')
             db.session.execute(sql, {'account': account, 'password':password})
             db.session.commit()
