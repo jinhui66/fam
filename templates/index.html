@@ -6,11 +6,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>HDU二手物品交易网</title>
-    <link rel="stylesheet" href="./static/common/layui/css/layui.css">
-    <link rel="stylesheet" href="./static/admin/css/style.css">
-    <script src="./static/common/layui/layui.js"></script>
-    <script src="./static/common/jquery-3.3.1.min.js"></script>
-    <script src="./static/common/vue.min.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <script src="../static/layui/layui.js"></script>
+    <script src="../static/js/jquery-3.3.1.min.js"></script>
+    <script src="../static/js/vue.min.js"></script>
     <style>
         .right h2{
             margin: 10px 0;
@@ -20,12 +20,15 @@
         }
     </style>
 </head>
+<script>
+
+//alert(typeof(localStorage.getItem('myVariable')));</script>
 <body>
 
 <div id="app">
     <!--顶栏-->
     <header>
-        <h2 v-text="webname"></h2>
+        <h1 v-text="webname"></h1>
         <div class="breadcrumb">
             <i class="layui-icon">&#xe715;</i>
             <ul>
@@ -36,7 +39,7 @@
         </div>
     </header>
 
-    <div class="main" id="app">
+    <div class="main">
         <!--左栏-->
         <div class="left">
             <ul class="cl" >
@@ -49,97 +52,138 @@
                     </a>
                     <!--子级分类-->
                     <div v-for="vo2,index2 in vo.list">
-                        <a href="javascript:;" :class="{active:vo2.active}" @click="onActive(index,index2)" v-text="vo2.name"></a>
+                        <a :href="vo2.url" target="main" :class="{active:vo2.active}"  v-text="vo2.name"></a>
                         <i v-show="vo2.active" class="layui-icon active">&#xe623;</i>
                     </div>
                 </li>
             </ul>
         </div>
+
         <!--右侧-->
         <div class="right">
-            <blockquote class="layui-elem-quote">
-                <h2>二手交易网</h2>
-                <p>数据库系统原理课程设计期末作业</p>
-                <p>组长：楼金辉   组员：叶汛涛，张泽灏，孔皓宇</p>
-            </blockquote>
-
-            <div class="layui-row">
-                <div class="layui-col-md4">
-                    <div class="layui-card">
-                        <div class="layui-card-header"><h2>项目描述</h2></div>
-                        <div class="layui-card-body" style="height: 250px;">
-                            <ul>
-                                <li>该二手交易平台是一个线上市场，让用户可以买卖已经使用过的商品。
-                                    这个平台提供了一个方便、安全的渠道，让买家和卖家能够轻松地交易各种二手物品，
-                                    包括服装、电子产品、家居用品、书籍、玩具等等。
-                                    在这个平台上，卖家可以轻松地发布他们的商品信息，
-                                    包括商品描述、价格、照片等。
-                                    他们可以根据需要随时更新或删除商品信息。</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-col-md4">
-                    <div class="layui-card">
-                        <div class="layui-card-header"><h2>买卖规则</h2></div>
-                        <div class="layui-card-body" style="height: 250px;">
-                            <ul>
-                                <li>卖家也可以与潜在买家进行交流和谈判，以便更好地达成交易。
-                                    对于买家来说，二手交易平台提供了一个广泛的选择范围，
-                                    他们可以根据自己的需求和预算，筛选和浏览各种商品。
-                                    买家还可以通过平台的搜索功能，快速找到他们想要的商品。
-                                    此外，买家还可以查看卖家的评价和信誉，以确保交易的可靠性。
-                                    二手交易平台还提供了一系列的安全保障措施，以保护买卖双方的权益。</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="layui-col-md4">
-
-                    <div class="layui-card">
-                        <div class="layui-card-header"><h2>平台优势</h2></div>
-                        <div class="layui-card-body" style="height: 250px;">
-                            <ul>
-                                <li>平台提供保障，确保买家在确认收货后，卖家的款项才会释放。
-                                    同时，平台也提供了纠纷解决机制，以解决交易过程中可能出现的争议。
-                                    总之，二手交易平台为用户提供了便利、安全和可靠的交易环境，
-                                    让用户能够轻松地买卖二手物品，实现资源的再利用和节约。</li>
-                                <li>...</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-                <td><img src="./static/admin/img/img.png" width="1700" height="600px"/></td>
-
-            </div>
-
-            <div class="layui-row">
-                <div class="layui-col-md9" style="padding-right: 20px">
-                    <table class="layui-table layui-form">
-                        <thead>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="layui-col-md3">
-                    <table class="layui-table layui-form">
-                    </table>
-                </div>
-            </div>
+            <iframe src="login.html" name="main" marginwidth="0" marginheight="0" frameborder="0" scrolling="auto" target="_self" ></iframe>
         </div>
+
     </div>
 </div>
-<script src="./static/admin/js/config.js"></script>
-<script src="./static/admin/js/script.js"></script>
+
 <script type="text/javascript">
+    let menu = [{
+        "name": "首页",
+        "icon": "&#xe68e;",
+        "url": "login.html",
+        "hidden": false,
+        "list": []
+    },{
+        "name": "基本组件",
+        "icon": "&#xe653;",
+        "url": "",
+        "hidden": false,
+        "list": [{
+            "name": "layui基本组件",
+            "url": "pages_component.html",
+        },{
+            "name": "layui内置模块",
+            "url": "pages_model.html"
+        },{
+            "name": "提示框",
+            "url": "pages_msg.html"
+        }]
+    }, {
+        "name": "用户管理",
+        "icon": "&#xe612;",
+        "url": "",
+        "hidden": false,
+        "list": [{
+            "name": "用户列表",
+            "url": "user_index.html"
+        }, {
+            "name": "添加用户",
+            "url": "user_add.html"
+        }]
+    }, {
+        "name": "文章管理",
+        "icon": "&#xe609;",
+        "url": "",
+        "hidden": false,
+        "list": [{
+            "name": "栏目管理",
+            "url": "type_index.html"
+        }, {
+            "name": "文章管理",
+            "url": "article_index.html"
+        }]
+    }, {
+        "name": "系统设置",
+        "icon": "&#xe620;",
+        "url": "",
+        "hidden": false,
+        "list": [{
+            "name": "网站设置",
+            "url": "web_index.html"
+        }, {
+            "name": "友情连接",
+            "url": "flink_index.html"
+        }, {
+            "name": "导航管理",
+            "url": "nav_index.html"
+        }, {
+            "name": "修改密码",
+            "url": "web_pwd.html"
+        }, {
+            "name": "清除缓存",
+            "url": "web_cache.html"
+        }]
+    }, {
+        "name": "数据库",
+        "icon": "&#xe857;",
+        "url": "",
+        "hidden": false,
+        "list": [{
+            "name": "备份数据库",
+            "url": "db_backup.html"
+        }, {
+            "name": "还原数据库",
+            "url": "db_reduction.html"
+        }]
+    }, {
+        "name": "退出登录",
+        "icon": "&#xe65c;",
+        "url": "out.html",
+        "list": []
+    }, {
+        "name": "开发者官网",
+        "icon": "&#xe65f;",
+        "url": "http://www.qadmin.net/",
+        "target": "_blank",
+        "list": []
+    }, {
+        "name": "开发文档",
+        "icon": "&#xe655;",
+        "url": "http://docs.qadmin.net/",
+        "target": "_blank",
+        "list": []
+    }];
+
+    let config = {
+        webName : "Qadmin",
+        menuList : menu,
+        //layer全局提示层
+        layerMsg: {
+            offset: 't', //坐标 (详细说明 https://www.layui.com/doc/modules/layer.html#offset)
+            shade: [0.4, '#000'] //遮罩 (详细说明 https://www.layui.com/doc/modules/layer.html#shade)
+        }
+    };
+
 
     //模拟登录状态,实际使用时请删除掉
-    if(!sessionStorage.isLgoin){
-        window.location.href = 'login.html';
-    }
+    //if(!sessionStorage.isLgoin){
+    //    window.location.href = 'login.html';
+    //}
 </script>
+
+
+
+<script src="../static/js/script.js"></script>
 </body>
 </html>

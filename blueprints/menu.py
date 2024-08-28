@@ -13,111 +13,77 @@ bp = Blueprint('menu',__name__,url_prefix="/")
 
 @bp.route('/',methods=['GET','POST'])
 def menu():
+    print(session.get('user_id'))
     if not session.get('user_id'):
-        return redirect('login')
-    elif session['type'] == 'user':
-        # sql = text('SELECT * FROM AvailableRooms')
-        # results = db.session.execute(sql)
-        return render_template('user/index.html')
-    elif session['type'] == 'admin':
-        return render_template('room/header.html')
+        return redirect('login.html')
+    else:
+        return render_template('index.html')
 
-
-@bp.route('/login',methods=['GET','POST'])
+@bp.route('/login.html',methods=['GET','POST'])
 def login():
     return render_template('login.html')
 
-
 @bp.route('/login_action',methods=['GET','POST'])
 def login_action():
+
     if request.method == 'GET':
         pass
     else:
-        type = request.form.get('type')
-        form = LoginForm(request.form)
-        if form.validate():
-            email = form.email.data
-            password = form.password.data
-            if type == 'user':
-                # get_user = User.query.filter_by(email=email).first()
-                # 使用原生SQL查询数据
-                sql = text('SELECT * FROM User WHERE email = :email')
-                get_user = db.session.execute(sql, {'email': email}).fetchone()
-                if get_user is not None:
-                    session['user_id'] = get_user.user_id
-                    session['type'] = 'user'
-                    password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-                    print(password)
-                    if(get_user.user_password == password):
-                        print('success')
-                        return jsonify({'status':'success', 'message':''})
-
-            else:
-                # get_admin = Admin.query.filter_by(email=email).first()
-                sql = text('SELECT * FROM Admin WHERE email = :email')
-                get_admin = db.session.execute(sql, {'email': email}).fetchone()
-                if get_admin is not None:
-                    session['user_id'] = get_admin.admin_id
-                    session['type'] = 'admin'
-                    password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-                    if(get_admin.admin_password == password):
-                        return jsonify({'status': 'success', 'message':''})
+        data = request.get_json()
+        account = data.get('account')
+        password = data.get('password')
+        if not account or not password:
+            return jsonify({'status':'', 'message':'请填写完整'})
+        # print(type(account),"ddddddd")
+        # print(account,password,1221212)
+        # get_user = User.query.filter_by(email=email).first()
+        # 使用原生SQL查询数据
+        sql = text('SELECT * FROM USER WHERE ACCOUNT = :account')
+        get_user = db.session.execute(sql, {'account': account}).fetchone()
+        print(2)
+        if get_user is not None:
+            session['user_id'] = get_user.IDUSER
+            # password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+            print(password)
+            if(get_user.PASSWORD == password):
+                print('success')
+                return jsonify({'status':'success', 'message':''})
         return jsonify({'status':'', 'message':'账号或密码错误'})
 
 
-
-
-@bp.route('/logout',methods=['GET','POST'])
+@bp.route('/out.html',methods=['GET','POST'])
 def logout():
     session.clear()
-    return redirect('/')
+    return redirect('/login.html')
 
-@bp.route('/register',methods=['GET','POST'])
+@bp.route('/register.html',methods=['GET','POST'])
 def register():
-    return render_template('menu/register.html')
+    return render_template('register.html')
 
 @bp.route('/register_action',methods=['GET','POST'])
 def register_action():
     if request.method == 'GET':
         pass
     else:
-        type = request.form.get('type')
-        form = RegisterForm(request.form)
-        # print(form.username.data)
-        if form.validate():
-            email = form.email.data
-            username = form.username.data
-            # print(username)
-            password = form.password.data
-            if type == 'user':
-                # user = User(email=email,user_name=username,user_password=hashlib.sha256(password.encode('utf-8')).hexdigest())
-                # # 提交
-                # db.session.add(user)
-                # db.session.commit()
+        data = request.get_json()
+        account = data.get('account')
+        password = data.get('password')
+        password2 = data.get('password2')
 
-                sql = text('insert into User(email,user_name,user_password) value(:email, :user_name, :user_password)')
-                db.session.execute(sql, {'email': email, 'user_name':username, 'user_password':hashlib.sha256(password.encode('utf-8')).hexdigest()})
-                db.session.commit()
-                return jsonify({'status': 'success'})
-            else: #type == 'admin'
-                # admin = Admin(email=email,admin_name=username,admin_password=hashlib.sha256(password.encode('utf-8')).hexdigest())
-                # db.session.add(admin)
-                # db.session.commit()
-
-                sql = text('insert into Admin(email,admin_name,admin_password) value(:email, :admin_name, :admin_password)')
-                db.session.execute(sql, {'email': email, 'admin_name':username, 'admin_password':hashlib.sha256(password.encode('utf-8')).hexdigest()})
-                db.session.commit()
-                return jsonify({'status': 'success'})
+        if not account or not password or not password2:
+            return jsonify({'status':'', 'message':'请填写完整'})
+        # 条件判断
+        sql = text('select * from USER where ACCOUNT = :account')
+        is_same = db.session.execute(sql, {'account': account}).fetchone()
+        if is_same:
+            return jsonify({'status': '', 'message': '账号已被注册'})
+        elif password != password2:
+            return jsonify({'status': '', 'message': '两次密码不一致'})
         else:
-            for field, errors in form.errors.items():
-                # errors 是一个列表，包含该字段的所有错误消息
-                if errors:
-                #     # 打印第一个错误消息
-                    error = errors[0]
-                    print(f"{field} 的第一个错误是: {errors[0]}")
-                    break
-                print(error)
-            return jsonify({'status': '','message':error})
+            sql = text('insert into USER(ACCOUNT,PASSWORD) value(:account, :password)')
+            db.session.execute(sql, {'account': account, 'password':password})
+            db.session.commit()
+            return jsonify({'status': 'success', 'message': '注册成功'})
 
 
 @bp.route('/forgot_password',methods=['GET','POST'])

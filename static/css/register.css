@@ -1,0 +1,57 @@
+
+body {
+    background: #179898 url(../img/bj.png) repeat;
+}
+.register
+{   width: 100%;
+height:35px;
+    background: #fff;
+}
+.register1{
+    box-shadow: 0px 0px 15px #ccc;
+    width: 560px;
+    height:50px;
+    margin: 0 auto;
+    background: #fff;
+    position: fixed;
+    margin-top: 80px;
+    left: 30%;
+    }
+.login {
+    box-shadow: 0px 0px 15px #ccc;
+    width: 260px;
+    height:450px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 60px 150px 60px 150px;
+    position: fixed;
+    margin-top: 135px;
+    left: 30%;
+}
+.login h2 {
+    font-size: 28px;
+    font-weight: 100;
+    color: #333;
+    text-align: center;
+    margin-bottom: 50px
+}
+
+.login .back{
+    float: right;
+    color: #666;
+}
+
+
+.layui-form-item{
+    position: relative;
+}
+
+.layui-form-item .input-icon{
+    position: absolute;
+    left: 5px;
+    top: 10px;
+    color: #999;
+}
+.layui-form-item .layui-input{
+    padding-left: 24px;
+}
