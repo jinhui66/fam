@@ -30,13 +30,6 @@ fetch('/family_list')
     userList.innerHTML = '';
     dd = data; // 将解析后的数据赋值给dd变量
 
-    // 循环数据，创建列表项
-    dd.forEach(item => {
-      const listItem = document.createElement('li'); // 创建列表项
-      listItem.textContent = `ID: ${item.family_name}`; // 设置列表项内容
-      userList.appendChild(listItem); // 将列表项添加到列表中
-    });
-
     // 确保dd变量在Layui表格组件中使用之前已经正确设置
     if (dd && dd.length > 0) {
       layui.use('table', function(){
@@ -47,7 +40,9 @@ fetch('/family_list')
           elem: '#test',
           data: dd, // 直接绑定JSON数据
           cols: [[
-            {field: 'family_name', title: '家庭名'},
+            {field: 'id', title: '家庭编号'},
+            {field: 'name', title: '家庭名'},
+            {field: 'date', title: '家庭创建时间'},
           ]],
               toolbar: '#toolbarDemo',
     defaultToolbar: ['filter', 'exports', 'print', { // 右上角工具图标

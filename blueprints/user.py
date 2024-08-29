@@ -11,13 +11,26 @@ bp = Blueprint('user',__name__,url_prefix="/")
 
 @bp.route('/users', methods=['GET'])
 def get_users():
-    users = [
-        {"时间": 1, "收入/支出": "收入", "类别": "生活", "子类别": "纸巾", "金额": 25, "备注": "666"},
-        {"id": 2, "name": "李四", "age": 30},
-        {"id": 3, "name": "王五", "age": 28}
-        ]
+    sql = text('select * from USER_IN;')
+    result = db.session.execute(sql).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
 
-    return jsonify(users)
+        list.append({
+            "time": row[4],
+            "is_out": row[0],
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    print(list)
+
+    return jsonify(list)
 
 @bp.route('/insert_user_action',methods=['GET','POST'])
 def insert_user_action():

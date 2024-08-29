@@ -12,12 +12,22 @@ bp = Blueprint('family',__name__,url_prefix="/")
 @bp.route('/family_list',methods=['GET','POST'])
 def family_list():
     user_id = session.get('user_id')
-    sql = text('select Fname from FAMILY F join FAMILY_USER FU on F.Fid = FU.Fid where Uid = :user_id ;')
-    family_names = db.session.execute(sql,{'user_id':user_id})
-    print(family_names[0])
-    for n in family_names[0]:
-        print(n)
-    return '1'
+    sql = text('select * from FAMILY F join FAMILY_USER FU on F.Fid = FU.Fid where Uid = :user_id;')
+    result = db.session.execute(sql,{'user_id':user_id}).fetchall()
+    list = []
+    if result == []:
+        list.append({})
+    else:
+
+        for row in result:
+            list.append({
+                "id": row[0],
+                "name": row[1],
+                "date": row[2]
+            })
+        # print(result)
+        # print(list)
+    return jsonify(list)
 
 # 邀请进入家庭
 @bp.route('/invite_family_action',methods=['GET','POST'])
