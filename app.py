@@ -5,6 +5,9 @@ from flask_migrate import Migrate
 import os
 from blueprints.menu import bp as menu_bp
 from blueprints.email import bp as email_bp
+from blueprints.index import bp as index_bp
+from blueprints.family import bp as family_bp
+
 from sqlalchemy import text
 from config import host, port
 
@@ -26,6 +29,8 @@ migrate = Migrate(app,db)
 # 注册蓝图
 app.register_blueprint(menu_bp)
 app.register_blueprint(email_bp)
+app.register_blueprint(index_bp)
+app.register_blueprint(family_bp)
 
 # 建表
 # with app.app_context():

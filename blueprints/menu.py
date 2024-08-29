@@ -82,9 +82,9 @@ def register_action():
             # 调用存储过程
             with db.engine.connect() as connection:
             # 调用存储过程
-                connection.execute(text("CALL COMPARE_CAPTCHA(:account, :captcha, @is_true);"), {'account':account, 'captcha':captcha})
+                connection.execute(text("CALL COMPARE_CAPTCHA(:account, :captcha, @result);"), {'account':account, 'captcha':captcha})
                 # 检查会话变量 @is_true
-                captcha_model = connection.execute(text("SELECT @is_true;")).fetchone()
+                captcha_model = connection.execute(text("SELECT @result;")).fetchone()
                 print(captcha_model[0])
 
                 if captcha_model[0] == 0:
