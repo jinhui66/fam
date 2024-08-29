@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>table 组件综合演示 - Layui</title>
+  <title> 家庭列表 </title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,38 +16,12 @@
 <div style="padding: 16px;">
   <table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
-<script type="text/html" id="toolbarDemo">
-  <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-    <button class="layui-btn layui-btn-sm" lay-event="getData">获取当前页数据</button>
-    <button class="layui-btn layui-btn-sm" id="dropdownButton">
-      下拉按钮
-      <i class="layui-icon layui-icon-down layui-font-12"></i>
-    </button>
-    <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest">
-      重载测试
-      <i class="layui-icon layui-icon-down layui-font-12"></i>
-    </button>
-    <button class="layui-btn layui-btn-sm layui-btn-primary" id="rowMode">
 
-      <i class="layui-icon layui-icon-down layui-font-12"></i>
-    </button>
-  </div>
-</script>
-<script type="text/html" id="barDemo">
-  <div class="layui-clear-space">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-    <a class="layui-btn layui-btn-xs" lay-event="more">
-      更多
-      <i class="layui-icon layui-icon-down"></i>
-    </a>
-  </div>
-</script>
 <script src="//unpkg.com/layui@2.9.16/dist/layui.js"></script>
 <script>
 let dd = []
 // 使用fetch API获取后端数据
-fetch('/users')
+fetch('/family_list')
   .then(response => response.json()) // 解析JSON格式的响应数据
   .then(data => {
     const userList = document.getElementById('userList'); // 获取页面中的列表容器
@@ -59,7 +33,7 @@ fetch('/users')
     // 循环数据，创建列表项
     dd.forEach(item => {
       const listItem = document.createElement('li'); // 创建列表项
-      listItem.textContent = `ID: ${item.id}, 姓名:${item.name}, 年龄: ${item.age}`; // 设置列表项内容
+      listItem.textContent = `ID: ${item.family_name}`; // 设置列表项内容
       userList.appendChild(listItem); // 将列表项添加到列表中
     });
 
@@ -73,9 +47,7 @@ fetch('/users')
           elem: '#test',
           data: dd, // 直接绑定JSON数据
           cols: [[
-            {field: 'id', title: 'ID'},
-            {field: 'name', title: '用户名'},
-            {field: 'age', title: '邮箱'}
+            {field: 'family_name', title: '家庭名'},
           ]],
               toolbar: '#toolbarDemo',
     defaultToolbar: ['filter', 'exports', 'print', { // 右上角工具图标

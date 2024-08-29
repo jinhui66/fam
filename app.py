@@ -7,7 +7,7 @@ from blueprints.menu import bp as menu_bp
 from blueprints.email import bp as email_bp
 from blueprints.index import bp as index_bp
 from blueprints.family import bp as family_bp
-
+from blueprints.user import bp as user_bp
 from sqlalchemy import text
 from config import host, port
 
@@ -31,7 +31,7 @@ app.register_blueprint(menu_bp)
 app.register_blueprint(email_bp)
 app.register_blueprint(index_bp)
 app.register_blueprint(family_bp)
-
+app.register_blueprint(user_bp)
 # 建表
 # with app.app_context():
 #     db.create_all()

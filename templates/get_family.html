@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>组建家庭</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <link rel="stylesheet" href="../static/css/login.css">
+    <script src="../static/layui/layui.js"></script>
+</head>
+
+<body id="login">
+<div class="login">
+    <form class="layui-form" method="post">
+        <div class="layui-form-item">
+            <input type="text" name="name" placeholder="家庭名" class="layui-input" id="name" required='required'>
+            <i class="layui-icon input-icon">&#xe66f;</i>
+        </div>
+        <div class="layui-form-item">
+            <button style="width: 100%" class="layui-btn" id="create-btn">立即创建</button>
+        </div>
+    </form>
+
+    <script>
+
+        document.getElementById('create-btn').addEventListener('click', function(event) {
+        event.preventDefault();
+
+
+        const name = document.getElementById('name').value;
+
+        fetch('/create_family_action', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: name})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == 'success') {
+            // 登录成功，跳转到menu.html
+                document.getElementById('name').value = '';
+                alert(data.message);
+
+            }
+        })
+        .catch(error => {
+            alert('程序报错！');
+        });
+        });
+
+
+    </script>
+</div>
+</body>
+
+</html>
