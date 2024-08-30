@@ -12,7 +12,7 @@ bp = Blueprint('user',__name__,url_prefix="/")
 @bp.route('/users', methods=['GET'])
 def get_users():
     user_id = session.get('user_id')
-    sql = text('select * from USER_INOUT where Uid = :user_id;')
+    sql = text('select * from USER_INOUT where Uid = :user_id ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'user_id':user_id}).fetchall()
     list = []
     for row in result:
@@ -67,7 +67,13 @@ def select_category():
 
 @bp.route('/select_type/<output>',methods=['POST','get'])
 def select_type(output):
-    cata = []
+    if output == 'all':
+        cata = []
+    else:
+        cata = [{
+            'id': 'all',
+            'title': '全部'}
+            ]
     print('output',output)
     sql = text('select * from TYPE T where T.Cid = :output')
     category = db.session.execute(sql,{'output':output}).fetchall()
@@ -85,7 +91,7 @@ def select_type(output):
 def type(output):
         # print(output)
     user_id = session.get('user_id')
-    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id;')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
     list = []
     for row in result:
@@ -124,7 +130,7 @@ def type(output):
 def category(output):
     # print(output)
     user_id = session.get('user_id')
-    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id;')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
     list = []
     for row in result:
@@ -168,13 +174,17 @@ def index123B():
 @bp.route('/receive',methods=['POST','get'])
 def receive_add_data():
     data = request.get_json()
-    is_in = data.get('is_in')
+    is_shouru = data.get('is_in')
+    if is_shouru == '收入':
+        is_in = 1
+    else:
+        is_in = 0
     # category = data.get('category')
     type = data.get('type')
     money = data.get('money')
     detail = data.get('detail')
     user_id = session.get('user_id')
-
+    print('receive')
     sql = text('insert into USER_INOUT(Uid,UImoney,Tid,UIdetail,UIisin) value(:user_id,:money,:type,:detail,:is_in)')
     db.session.execute(sql,{'user_id':user_id,'money':money,'type':type,'detail':detail,'is_in':is_in})
     db.session.commit()

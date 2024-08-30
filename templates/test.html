@@ -11,6 +11,7 @@
 // 全局变量，用于存储从服务器获取的数据
 let globalData;
 let globalData2;
+let globalid;
 let url1 = 'select_category';
 let url2 = 'select_type';
 // 使用fetch获取数据并将其设置为全局变量
@@ -56,6 +57,29 @@ function onInputValueReceived(value) {
 }
 
 
+function sendDataToServer(value) {
+    fetch('receive', {
+        method: 'POST', // 或者 'PUT'，根据你的需求
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(value), // 将JavaScript对象转换为JSON字符串
+    })
+    .then(response => response.json()) // 解析JSON格式的响应体
+    .then(data => {
+        console.log('Success');
+        var table = layui.table;
+        table.reload('test', {url: '/users'});
+
+        // 这里可以添加成功提交后的处理逻辑
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // 这里可以添加错误处理逻辑
+    });
+
+    }
+
 
 
 function deleteData(id) {
@@ -74,25 +98,7 @@ function deleteData(id) {
   .catch(error => console.error('Error:', error));
 }
 
-function sendDataToServer(value) {
-  fetch('receive', {
-    method: 'POST', // 或者 'PUT'，根据你的需求
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(value), // 将JavaScript对象转换为JSON字符串
-  })
-  .then(response => response.json()) // 解析JSON格式的响应体
-  .then(data => {
-    console.log('Success');
-    // 这里可以添加成功提交后的处理逻辑
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-    // 这里可以添加错误处理逻辑
-  });
 
-}
 </script>
 </head>
 <body>
@@ -106,22 +112,22 @@ function sendDataToServer(value) {
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
     <button class="layui-btn layui-btn-sm" id="dropdownButton">
-      添加
-      <i class="layui-icon layui-icon-down layui-font-12"></i>
+        添加
+        <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
     <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest">
-      大类筛选
-      <i class="layui-icon layui-icon-down layui-font-12"></i>
+        大类筛选
+        <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
     <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest2">
         小类筛选
         <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
     <button class="layui-btn layui-btn-sm layui-btn-primary" id="rowMode">
-      <span>行模式</span>
-      <i class="layui-icon layui-icon-down layui-font-12"></i>
+        <span>行模式</span>
+        <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
-  </div>
+    </div>
 </script>
 <script type="text/html" id="barDemo">
   <div class="layui-clear-space">
@@ -134,6 +140,7 @@ function sendDataToServer(value) {
 </script>
 <script src="../static/js/layui.js"></script></body>
 <script>
+
 var url = '/users';
   layui.use(['table', 'dropdown'], function(){
         var table = layui.table;
@@ -167,7 +174,6 @@ var url = '/users';
 
       var $ = layui.jquery;
   $('#dropdownButton').on('click', function(){
-      layer.msg('已设为单行');
             layer.open({
         title: '填入增加的类别',
         type: 2,
@@ -189,7 +195,7 @@ dropdown.render({
         fetchData2('/select_type/'+obj.id);
         setTimeout(function() {
             dropdown.reload('reloadTest2', {data:globalData2});
-        }, 100);
+        }, 500);
 
         break;
         default:
@@ -200,8 +206,8 @@ dropdown.render({
         fetchData2('/select_type/'+obj.id);
         setTimeout(function() {
             dropdown.reload('reloadTest2', {data:globalData2});
-        }, 100);
-
+        }, 500);
+        globalid = obj.id;
         }}
     });
 
@@ -212,8 +218,8 @@ dropdown.render({
     click: function(obj){
         switch(obj.id){
         case 'all':
-        url = '/users';
-        table.reload('test', {url: url});
+        url = '/type';
+        table.reload('test', {url: url+'/'+globalid});
         break;
         default:
             //alert(url);
