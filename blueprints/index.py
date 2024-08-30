@@ -13,7 +13,6 @@ bp = Blueprint('index',__name__,url_prefix="/")
 def test():
     return render_template('test.html')
 
-
 @bp.route('/get_family',methods=['GET','POST'])
 def get_family():
     return render_template('get_family.html')

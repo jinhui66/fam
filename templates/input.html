@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>简单输入表单</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 300px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form action="#" method="post">
+            <div class="form-group">
+                <label for="textInput">请输入添加类别的内容：</label>
+                <input type="text" id="textInput" name="textInput" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="提交" onclick="closeIframeLayer()">
+            </div>
+        </form>
+    </div>
+<script>
+function closeIframeLayer() {
+    var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.iframeAuto(index); // 确保iframe自适应大小
+    parent.layer.iframeSrc(index, 'aa');
+    var value = document.getElementById('textInput').value;
+     parent.onInputValueReceived(value);
+    // 关闭包含iframe的层
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+}</script>
+</body>
+</html>

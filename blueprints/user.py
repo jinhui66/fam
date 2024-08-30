@@ -11,7 +11,7 @@ bp = Blueprint('user',__name__,url_prefix="/")
 
 @bp.route('/users', methods=['GET'])
 def get_users():
-    sql = text('select * from USER_IN;')
+    sql = text('select * from USER_INOUT;')
     result = db.session.execute(sql).fetchall()
     list = []
     for row in result:
@@ -20,17 +20,84 @@ def get_users():
         type = zhonglei[0]
         category = zhonglei[1]
 
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
+
         list.append({
             "time": row[4],
-            "is_out": row[0],
+            "is_in": is_in,
             "category": category,
             "type": type,# type
             "money": row[2],
             "detail": row[5]
         })
-    print(list)
+    # print(list)
 
-    return jsonify(list)
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+    return jsonify(response)
+
+@bp.route('/select_type',methods=['POST','get'])
+def index12B():
+    cata = [{
+            'id': 'all',
+            'title': '全部'}
+            ]
+
+    sql = text('select * from CATEGORY')
+    category = db.session.execute(sql).fetchall()
+    print(category)
+    for row in category:
+        print(row)
+        cata.append({
+            'id': row[0],
+            'title': row[1]
+        })
+
+    return jsonify(cata)
+@bp.route('/category/<output>',methods=['POST','get'])
+def index12B11(output):
+    print(output)
+
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid;')
+    result = db.session.execute(sql,{'output':output}).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
+
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
+
+        list.append({
+            "time": row[4],
+            "is_in": is_in,
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    # print(list)
+
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+    return jsonify(response)
 
 @bp.route('/insert_user_action',methods=['GET','POST'])
 def insert_user_action():

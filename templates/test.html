@@ -7,6 +7,36 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="../static/css/layui1.css" rel="stylesheet">
+  <script>// 假设这是你想要从服务器获取的数据的URL
+// 全局变量，用于存储从服务器获取的数据
+let globalData;
+let url1 = 'select_type';
+// 使用fetch获取数据并将其设置为全局变量
+async function fetchData(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    // 将获取的数据设置为全局变量
+    globalData = data;
+    //alert(JSON.stringify(globalData))
+    console.log('Data fetched and set as global variable:', globalData);
+  } catch (error) {
+    console.error('Fetching data failed:', error);
+  }
+}
+// 调用fetchData函数
+fetchData(url1);
+function onInputValueReceived(value) {
+globalData =
+    console.log('接收到的值:', value);
+    // 在这里处理接收到的值
+    fetchData('a'+'/'+value);
+}
+
+</script>
 </head>
 <body>
 <!--
@@ -25,11 +55,11 @@
       <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
     <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest">
-      重载测试
+      名字筛选
       <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
     <button class="layui-btn layui-btn-sm layui-btn-primary" id="rowMode">
-
+      <span>行模式</span>
       <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
   </div>
@@ -43,39 +73,17 @@
     </a>
   </div>
 </script>
-<script src="//unpkg.com/layui@2.9.16/dist/layui.js"></script>
+<script src="../static/js/layui.js"></script></body>
 <script>
-let dd = []
-// 使用fetch API获取后端数据
-fetch('/users')
-  .then(response => response.json()) // 解析JSON格式的响应数据
-  .then(data => {
-    const userList = document.getElementById('userList'); // 获取页面中的列表容器
-
-    // 清空列表内容
-    userList.innerHTML = '';
-    dd = data; // 将解析后的数据赋值给dd变量
-
-    // 循环数据，创建列表项
-
-
-    // 确保dd变量在Layui表格组件中使用之前已经正确设置
-    if (dd && dd.length > 0) {
-      layui.use('table', function(){
+var url = '/users';
+  layui.use(['table', 'dropdown'], function(){
         var table = layui.table;
+         var dropdown = layui.dropdown;
         // 执行渲染
         table.render({
           elem: '#test',
-          data: dd, // 直接绑定JSON数据
-          cols: [[
-            {field: 'time', title: '时间'},
-            {field: 'is_out', title: '收入/支出'},
-            {field: 'category', title: '类别'},
-            {field: 'type', title: '子类别'},
-            {field: 'money', title: '金额'},
-            {field: 'detail', title: '备注'}
-          ]],
-              toolbar: '#toolbarDemo',
+          url: url, // 直接绑定JSON数据
+         toolbar: '#toolbarDemo',
     defaultToolbar: ['filter', 'exports', 'print', { // 右上角工具图标
       title: '提示',
       layEvent: 'LAYTABLE_TIPS',
@@ -91,20 +99,231 @@ fetch('/users')
     cellMinWidth: 80,
     totalRow: true, // 开启合计行
     page: true,
+     cols: [[
+     {type: 'checkbox', fixed: 'left'},
+      {field: 'time', title: '时间'},
+      {field: 'is_in', title: '收入/支出'},
+      {field: 'category', title: '类别'},
+      {field: 'type', title: '子类别'},
+      {field: 'money', title: '金额'},
+      {field: 'detail', title: '备注'},
+      {fixed: 'right', title:'操作', width: 134, minWidth: 125, toolbar: '#barDemo'}
+    ]],
+    done:function(){
+    //alert("sss");
+    var id = this.id;
+    //-alert(id);
+     dropdown.render({
+    elem: '#dropdownButton', // 绑定到ID为dropdownButton的按钮
+    data: [{
+      id: 'add',
+      title: '添加'
+    },{
+      id: 'update',
+      title: '编辑'
+    },{
+      id: 'delete',
+      title: '删除'
+    }],
+    click: function(obj){
+          var checkStatus = table.checkStatus(id)
+          var data = checkStatus.data; // 获取选中的数据
+          switch(obj.id){
+            case 'add':
+              layer.open({
+                title: '添加',
+                type: 1,
+                area: ['80%','80%'],
+                content: '<div style="padding: 16px;">自定义表单元素</div>'
+              });
+            break;
+            case 'update':
+              if(data.length !== 1) return layer.msg('请选择一行');
+              layer.open({
+                title: '编辑',
+                type: 1,
+                area: ['80%','80%'],
+                content: '<div style="padding: 16px;">自定义表单元素</div>'
+              });
+            break;
+            case 'delete':
+              if(data.length === 0){
+                return layer.msg('请选择一行');
+              }
+              layer.msg('delete event');
+            break;
+          }
+        }
+  });
+  dropdown.render({
+        elem: '#reloadTest', // 可绑定在任意元素中，此处以上述按钮为例
+        data: globalData,
+        // 菜单被点击的事件
+        click: function(obj){
+          switch(obj.id){
+            case 'all':
+                url = '/users';
+                table.reload('test', {url: url});
+            break;
+            default:
+                url = '/category'
+                //alert(url);
+                table.reload('test', {url: url+'/'+obj.id});
+            }}
+      });
+
+
+
+dropdown.render({
+        elem: '#rowMode',
+        data: [{
+          id: 'default-row',
+          title: '单行模式（默认）'
+        },{
+          id: 'multi-row',
+          title: '多行模式'
+        }],
+        // 菜单被点击的事件
+        click: function(obj){
+          var checkStatus = table.checkStatus(id)
+          var data = checkStatus.data; // 获取选中的数据
+          switch(obj.id){
+            case 'default-row':
+              table.reload('test', {
+                lineStyle: null // 恢复单行
+              });
+              layer.msg('已设为单行');
+            break;
+            case 'multi-row':
+              table.reload('test', {
+                // 设置行样式，此处以设置多行高度为例。若为单行，则没必要设置改参数 - 注：v2.7.0 新增
+                lineStyle: 'height: 95px;'
+              });
+              layer.msg('即通过设置 lineStyle 参数可开启多行');
+            break;
+          }
+        },
+    error: function(res, msg){
+      console.log(res, msg)
+    }
+  });
+
+table.on('toolbar(test)', function(obj){
+    var id = obj.config.id;
+    var checkStatus = table.checkStatus(id);
+    var othis = lay(this);
+    switch(obj.event){
+      case 'getCheckData':
+        var data = checkStatus.data;
+        layer.alert(layui.util.escape(JSON.stringify(data)));
+        break;
+      case 'getData':
+        var getData = table.getData(id);
+        console.log(getData);
+        layer.alert(layui.util.escape(JSON.stringify(getData)));
+        break;
+    };
+  });
+
+  table.on('colTool(test)', function(obj){
+    var event = obj.event;
+    console.log(obj);
+    if(event === 'email-tips'){
+      layer.alert(layui.util.escape(JSON.stringify(obj.col)), {
+        title: '当前列属性配置项'
+      });
+    }
+  });
+
+  table.on('tool(test)', function(obj){ // 双击 toolDouble
+    var data = obj.data; // 获得当前行数据
+    // console.log(obj)
+    if(obj.event === 'edit'){
+      layer.open({
+        title: '编辑 - id:'+ data.id,
+        type: 1,
+        area: ['80%','80%'],
+        content: '<div style="padding: 16px;">自定义表单元素</div>'
+      });
+    } else if(obj.event === 'more'){
+      // 更多 - 下拉菜单
+      dropdown.render({
+        elem: this, // 触发事件的 DOM 对象
+        show: true, // 外部事件触发即显示
+        data: [{
+          title: '查看',
+          id: 'detail'
+        },{
+          title: '删除',
+          id: 'del'
+        }],
+        click: function(menudata){
+          if(menudata.id === 'detail'){
+            layer.msg('查看操作，当前行 ID:'+ data.id);
+          } else if(menudata.id === 'del'){
+            layer.confirm('真的删除行 [id: '+ data.id +'] 么', function(index){
+              obj.del(); // 删除对应行（tr）的DOM结构
+              layer.close(index);
+
+              // 向服务端发送删除指令
+            });
+          }
+        },
+        align: 'right', // 右对齐弹出
+        style: 'box-shadow: 1px 1px 10px rgb(0 0 0 / 12%);' // 设置额外样式
+      })
+    }
+  });
+
+  // 触发表格复选框选择
+  table.on('checkbox(test)', function(obj){
+    console.log(obj)
+  });
+
+  // 触发表格单选框选择
+  table.on('radio(test)', function(obj){
+    console.log(obj)
+  });
+
+  // 行单击事件
+  table.on('row(test)', function(obj){
+    //console.log(obj);
+    //layer.closeAll('tips');
+  });
+  // 行双击事件
+  table.on('rowDouble(test)', function(obj){
+    console.log(obj);
+  });
+
+  table.on('edit(test)', function(obj){
+    var field = obj.field; // 得到字段
+    var value = obj.value; // 得到修改后的值
+    var data = obj.data; // 得到所在行所有键值
+    // 值的校验
+    if(field === 'email'){
+      if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(obj.value)){
+        layer.tips('输入的邮箱格式不正确，请重新编辑', this, {tips: 1});
+        return obj.reedit(); // 重新编辑 -- v2.8.0 新增
+      }
+    }
+    // 编辑后续操作，如提交更新请求，以完成真实的数据更新
+    // …
+    layer.msg('编辑成功', {icon: 1});
+
+    // 其他更新操作
+    var update = {};
+    update[field] = value;
+    obj.update(update);
+  });
+
+    }//done:function
         });
       });
-    } else {
-      console.error('dd变量未正确设置或为空，无法渲染表格');
-    }
-  })
 
-  .catch(error => {
-    console.error('获取数据失败:', error);
-  });
 
 // 注意：在调用Layui表格组件之前，dd变量可能还没有被设置，因此你可能需要添加一个检查来确保dd变量已经包含了有效的数据。
 
 
 </script>
-</body>
+
 </html>
