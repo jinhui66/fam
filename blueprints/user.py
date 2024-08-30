@@ -64,6 +64,62 @@ def select_category():
         })
 
     return jsonify(cata)
+
+@bp.route('/select_type/<output>',methods=['POST','get'])
+def select_type(output):
+    cata = []
+    print('output',output)
+    sql = text('select * from TYPE T where T.Cid = :output')
+    category = db.session.execute(sql,{'output':output}).fetchall()
+    print(category)
+    for row in category:
+        # print(row)
+        cata.append({
+            'id': row[0],
+            'title': row[1]
+        })
+
+    return jsonify(cata)
+
+@bp.route('/type/<output>',methods=['POST','get'])
+def type(output):
+        # print(output)
+    user_id = session.get('user_id')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id;')
+    result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
+
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
+
+        list.append({
+            "id": row[0],
+            "time": row[4],
+            "is_in": is_in,
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    # print(list)
+
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+
+    return jsonify(response)
+
 @bp.route('/category/<output>',methods=['POST','get'])
 def category(output):
     # print(output)
@@ -101,6 +157,9 @@ def category(output):
     }
 
     return jsonify(response)
+
+
+
 
 @bp.route('/add_data',methods=['POST','get'])
 def index123B():

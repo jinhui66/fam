@@ -10,8 +10,11 @@
   <script>// 假设这是你想要从服务器获取的数据的URL
 // 全局变量，用于存储从服务器获取的数据
 let globalData;
+let globalData2;
 let url1 = 'select_category';
+let url2 = 'select_type';
 // 使用fetch获取数据并将其设置为全局变量
+
 async function fetchData(url) {
   try {
     const response = await fetch(url);
@@ -27,12 +30,33 @@ async function fetchData(url) {
     console.error('Fetching data failed:', error);
   }
 }
+
+async function fetchData2(url) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      // 将获取的数据设置为全局变量
+      globalData2 = data;
+      //alert(JSON.stringify(globalData))
+      console.log('Data fetched and set as global variable:', globalData);
+    } catch (error) {
+      console.error('Fetching data failed:', error);
+    }
+  }
 // 调用fetchData函数
 fetchData(url1);
+fetchData2(url2);
+
 function onInputValueReceived(value) {
     console.log('接收到的值:', value);
     sendDataToServer(value);
 }
+
+
+
 
 function deleteData(id) {
   // 发送DELETE请求到Flask后端路由
@@ -88,6 +112,10 @@ function sendDataToServer(value) {
     <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest">
       大类筛选
       <i class="layui-icon layui-icon-down layui-font-12"></i>
+    </button>
+    <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest2">
+        小类筛选
+        <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
     <button class="layui-btn layui-btn-sm layui-btn-primary" id="rowMode">
       <span>行模式</span>
@@ -149,38 +177,51 @@ var url = '/users';
     // 这里可以执行更多操作，比如数据提交、页面跳转等
   });
 
-  dropdown.render({
-        elem: '#reloadTest', // 可绑定在任意元素中，此处以上述按钮为例
-        data: globalData,
-        // 菜单被点击的事件
-        click: function(obj){
-          switch(obj.id){
-            case 'plus':
+dropdown.render({
+    elem: '#reloadTest', // 可绑定在任意元素中，此处以上述按钮为例
+    data: globalData,
+    // 菜单被点击的事件
+    click: function(obj){
+        switch(obj.id){
+        case 'all':
+        url = '/users';
+        table.reload('test', {url: url});
+        fetchData2('/select_type/'+obj.id);
+        setTimeout(function() {
+            dropdown.reload('reloadTest2', {data:globalData2});
+        }, 100);
 
-         layer.msg('已设为单行');
-            layer.open({
-        title: '填入增加的类别',
-        type: 2,
-        area: ['35%','39%'],
-        content: 'aa'
-      });
-      setTimeout(function() {
-    dropdown.reload('reloadTest',{data: globalData});
-}, 2000);
+        break;
+        default:
+            //alert(url);
+        url = '/category';
 
+        table.reload('test', {url: url+'/'+obj.id});
+        fetchData2('/select_type/'+obj.id);
+        setTimeout(function() {
+            dropdown.reload('reloadTest2', {data:globalData2});
+        }, 100);
 
-            break;
-            case 'all':
-            url = '/users';
-            table.reload('test', {url: url});
-            break;
-            default:
-              //alert(url);
-            url = '/category'
-            table.reload('test', {url: url+'/'+obj.id});
-            }}
-      });
+        }}
+    });
 
+dropdown.render({
+    elem: '#reloadTest2', // 可绑定在任意元素中，此处以上述按钮为例
+    data: globalData2,
+    // 菜单被点击的事件
+    click: function(obj){
+        switch(obj.id){
+        case 'all':
+        url = '/users';
+        table.reload('test', {url: url});
+        break;
+        default:
+            //alert(url);
+        url = '/category'
+        table.reload('test', {url: url+'/'+obj.id});
+
+        }}
+    });
 
 
 dropdown.render({
