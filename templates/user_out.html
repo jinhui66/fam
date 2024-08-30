@@ -51,54 +51,6 @@ async function fetchData2(url) {
 fetchData(url1);
 fetchData2(url2);
 
-function onInputValueReceived(value) {
-    console.log('接收到的值:', value);
-    sendDataToServer(value);
-}
-
-
-function sendDataToServer(value) {
-    fetch('receive', {
-        method: 'POST', // 或者 'PUT'，根据你的需求
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(value), // 将JavaScript对象转换为JSON字符串
-    })
-    .then(response => response.json()) // 解析JSON格式的响应体
-    .then(data => {
-        console.log('Success');
-        var table = layui.table;
-        table.reload('test', {url: '/users'});
-
-        // 这里可以添加成功提交后的处理逻辑
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        // 这里可以添加错误处理逻辑
-    });
-
-    }
-
-
-
-function deleteData(id) {
-  // 发送DELETE请求到Flask后端路由
-  fetch('/delete/' + id, {
-    method: 'POST'
-  })
-  .then(response => {
-    if (response.ok) {
-      alert('数据删除成功！');
-      // 可以在这里添加其他逻辑，比如更新页面
-    } else {
-      alert('数据删除失败！');
-    }
-  })
-  .catch(error => console.error('Error:', error));
-}
-
-
 </script>
 </head>
 <body>
@@ -111,20 +63,12 @@ function deleteData(id) {
 </div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" id="dropdownButton">
-        添加
-        <i class="layui-icon layui-icon-down layui-font-12"></i>
-    </button>
     <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest">
         大类筛选
         <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
     <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest2">
         小类筛选
-        <i class="layui-icon layui-icon-down layui-font-12"></i>
-    </button>
-    <button class="layui-btn layui-btn-sm layui-btn-primary" id="rowMode">
-        <span>行模式</span>
         <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
     </div>
@@ -141,7 +85,7 @@ function deleteData(id) {
 <script src="../static/js/layui.js"></script></body>
 <script>
 
-var url = '/users';
+var url = '/users_out';
   layui.use(['table', 'dropdown'], function(){
         var table = layui.table;
          var dropdown = layui.dropdown;
@@ -159,7 +103,6 @@ var url = '/users';
     totalRow: true, // 开启合计行
     page: false,
     cols: [[
-        {fixed: 'left', title:'操作', width: 134, minWidth: 125, toolbar: '#barDemo'},
         {field: 'time', title: '时间'},
         {field: 'is_in', title: '收入/支出'},
         {field: 'category', title: '类别'},
@@ -190,7 +133,7 @@ dropdown.render({
     click: function(obj){
         switch(obj.id){
         case 'all':
-        url = '/users';
+        url = '/user_out';
         table.reload('test', {url: url});
         fetchData2('/select_type/'+obj.id);
         setTimeout(function() {
@@ -200,7 +143,7 @@ dropdown.render({
         break;
         default:
             //alert(url);
-        url = '/category';
+        url = '/category_out';
 
         table.reload('test', {url: url+'/'+obj.id});
         fetchData2('/select_type/'+obj.id);
@@ -218,107 +161,17 @@ dropdown.render({
     click: function(obj){
         switch(obj.id){
         case 'all':
-        url = '/type';
+        url = '/type_out';
         table.reload('test', {url: url+'/'+globalid});
-        break;
-        case 'allall':
-        url = '/users';
-        table.reload('test', {url: url});
         break;
         default:
             //alert(url);
-        url = '/category'
+        url = '/category_out'
         table.reload('test', {url: url+'/'+obj.id});
 
         }}
     });
 
-
-dropdown.render({
-        elem: '#rowMode',
-        data: [{
-          id: 'default-row',
-          title: '单行模式（默认）'
-        },{
-          id: 'multi-row',
-          title: '多行模式'
-        }],
-        // 菜单被点击的事件
-        click: function(obj){
-          var checkStatus = table.checkStatus(id)
-          var data = checkStatus.data; // 获取选中的数据
-          switch(obj.id){
-            case 'default-row':
-              table.reload('test', {
-                lineStyle: null // 恢复单行
-              });
-              layer.msg('已设为单行');
-            break;
-            case 'multi-row':
-              table.reload('test', {
-                // 设置行样式，此处以设置多行高度为例。若为单行，则没必要设置改参数 - 注：v2.7.0 新增
-                lineStyle: 'height: 95px;'
-              });
-              layer.msg('即通过设置 lineStyle 参数可开启多行');
-            break;
-          }
-        },
-    error: function(res, msg){
-      console.log(res, msg)
-    }
-  });
-
-  table.on('colTool(test)', function(obj){
-    var event = obj.event;
-    console.log(obj);
-    if(event === 'email-tips'){
-      layer.alert(layui.util.escape(JSON.stringify(obj.col)), {
-        title: '当前列属性配置项'
-      });
-    }
-  });
-
-  table.on('tool(test)', function(obj){ // 双击 toolDouble
-    var data = obj.data; // 获得当前行数据
-    // console.log(obj)
-    if(obj.event === 'edit'){
-      layer.open({
-        title: '编辑 - id:'+ data.id,
-        type: 1,
-        area: ['80%','80%'],
-        content: '<div style="padding: 16px;">自定义表单元素</div>'
-      });
-    } else if(obj.event === 'more'){
-      // 更多 - 下拉菜单
-      dropdown.render({
-        elem: this, // 触发事件的 DOM 对象
-        show: true, // 外部事件触发即显示
-        data: [{
-          title: '查看',
-          id: 'detail'
-        },{
-          title: '删除',
-          id: 'del'
-        }],
-        click: function(menudata){
-          if(menudata.id === 'detail'){
-            layer.msg('查看操作，当前行 ID:'+ data.id);
-          } else if(menudata.id === 'del'){
-            layer.confirm('真的删除行 [id: '+ data.id +'] 么', function(index){
-              obj.del(); // 删除对应行（tr）的DOM结构
-              deleteData(data.id);
-              layer.close(index);
-
-
-              // 向服务端发送删除指令
-            });
-          }
-        },
-        align: 'right', // 右对齐弹出
-        style: 'box-shadow: 1px 1px 10px rgb(0 0 0 / 12%);' // 设置额外样式
-      })
-    }
-  });
 
   // 触发表格复选框选择
   table.on('checkbox(test)', function(obj){

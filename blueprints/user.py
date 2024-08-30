@@ -46,6 +46,83 @@ def get_users():
 
     return jsonify(response)
 
+@bp.route('/users_in', methods=['GET'])
+def users_in():
+    user_id = session.get('user_id')
+    sql = text('select * from USER_INOUT where Uid = :user_id and UIisin = 1 ORDER BY UIid DESC;')
+    result = db.session.execute(sql,{'user_id':user_id}).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
+
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
+
+        list.append({
+            "id": row[0],
+            "time": row[4],
+            "is_in": is_in,
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    # print(list)
+
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+    return jsonify(response)
+
+
+
+@bp.route('/users_out', methods=['GET'])
+def users_out():
+    user_id = session.get('user_id')
+    sql = text('select * from USER_INOUT where Uid = :user_id and UIisin = 0 ORDER BY UIid DESC;')
+    result = db.session.execute(sql,{'user_id':user_id}).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
+
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
+
+        list.append({
+            "id": row[0],
+            "time": row[4],
+            "is_in": is_in,
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    # print(list)
+
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+    return jsonify(response)
+
+
 @bp.route('/select_category',methods=['POST','get'])
 def select_category():
     cata = [{
@@ -68,7 +145,10 @@ def select_category():
 @bp.route('/select_type/<output>',methods=['POST','get'])
 def select_type(output):
     if output == 'all':
-        cata = []
+        cata = [{
+            'id': 'allall',
+            'title': '全部'}
+            ]
     else:
         cata = [{
             'id': 'all',
@@ -87,11 +167,91 @@ def select_type(output):
 
     return jsonify(cata)
 
+
+
 @bp.route('/type/<output>',methods=['POST','get'])
 def type(output):
         # print(output)
     user_id = session.get('user_id')
     sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id ORDER BY UIid DESC;')
+    result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
+
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
+
+        list.append({
+            "id": row[0],
+            "time": row[4],
+            "is_in": is_in,
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    # print(list)
+
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+
+    return jsonify(response)
+
+@bp.route('/type_in/<output>',methods=['POST','get'])
+def type_in(output):
+        # print(output)
+    user_id = session.get('user_id')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id and UI.UIisin = 1 ORDER BY UIid DESC;')
+    result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
+
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
+
+        list.append({
+            "id": row[0],
+            "time": row[4],
+            "is_in": is_in,
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    # print(list)
+
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+
+    return jsonify(response)
+
+@bp.route('/type_out/<output>',methods=['POST','get'])
+def type_out(output):
+        # print(output)
+    user_id = session.get('user_id')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id and UI.UIisin = 0 ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
     list = []
     for row in result:
@@ -164,8 +324,81 @@ def category(output):
 
     return jsonify(response)
 
+@bp.route('/category_in/<output>',methods=['POST','get'])
+def category_in(output):
+    # print(output)
+    user_id = session.get('user_id')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id and UIisin = 1 ORDER BY UIid DESC;')
+    result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
 
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
 
+        list.append({
+            "id": row[0],
+            "time": row[4],
+            "is_in": is_in,
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    # print(list)
+
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+    return jsonify(response)
+
+@bp.route('/category_out/<output>',methods=['POST','get'])
+def category_out(output):
+    # print(output)
+    user_id = session.get('user_id')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id and UIisin = 0 ORDER BY UIid DESC;')
+    result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
+    list = []
+    for row in result:
+        sql = text('select T.Tname, C.Cname from TYPE T join CATEGORY C on C.Cid = T.Cid where T.Tid = :Tid')
+        zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
+        type = zhonglei[0]
+        category = zhonglei[1]
+
+        if row[6] == 0:
+            is_in = '支出'
+        else:
+            is_in = '收入'
+
+        list.append({
+            "id": row[0],
+            "time": row[4],
+            "is_in": is_in,
+            "category": category,
+            "type": type,# type
+            "money": row[2],
+            "detail": row[5]
+        })
+    # print(list)
+
+    response = {
+        "code": 0,  # 成功状态码
+        "msg": "",  # 消息字段
+        "count": len(list),  # 数据总数
+        "data": list  # 数据列表
+    }
+
+    return jsonify(response)
 
 @bp.route('/add_data',methods=['POST','get'])
 def index123B():
