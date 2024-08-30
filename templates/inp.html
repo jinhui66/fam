@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>收支记录表单</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+  }
+  .form-container {
+    background: #fff;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  button {
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #4cae4c;
+  }
+</style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>收支记录表单</h2>
+  <form id="expenseForm">
+    <div class="form-group">
+      <label for="is_in">收入/支出:</label>
+      <input type="text" id="is_in" name="is_in" placeholder="请输入收入或支出">
+    </div>
+    <div class="form-group">
+      <label for="category">类别:</label>
+      <input type="text" id="category" name="category" placeholder="请输入类别">
+    </div>
+    <div class="form-group">
+      <label for="type">子类别:</label>
+      <input type="text" id="type" name="type" placeholder="请输入子类别">
+    </div>
+    <div class="form-group">
+      <label for="money">金额:</label>
+      <input type="text" id="money" name="money" placeholder="请输入金额">
+    </div>
+    <div class="form-group">
+      <label for="detail">备注:</label>
+      <input type="text" id="detail" name="detail" placeholder="请输入备注">
+    </div>
+    <button type="submit" onclick="closeIframeLayer()">提交记录</button>
+  </form>
+</div>
+
+<script>
+function closeIframeLayer() {
+      var formData = {
+    is_in: document.getElementById('is_in').value,
+    category: document.getElementById('category').value,
+    type: document.getElementById('type').value,
+    money: document.getElementById('money').value,
+    detail: document.getElementById('detail').value
+  };
+      var index = parent.layer.getFrameIndex(window.name);
+     parent.layer.iframeAuto(index); // 确保iframe自适应大小
+    parent.layer.iframeSrc(index, 'add_data');
+     parent.onInputValueReceived(formData);
+
+    // 关闭包含iframe的层
+    parent.layer.close(parent.layer.getFrameIndex(window.name));
+}
+</script>
+
+</body>
+</html>
