@@ -18,55 +18,62 @@
 </div>
 
 <script src="//unpkg.com/layui@2.9.16/dist/layui.js"></script>
+
 <script>
 let dd = []
+let family_id;
 // 使用fetch API获取后端数据
 fetch('/family_list')
-  .then(response => response.json()) // 解析JSON格式的响应数据
+  .then(response => response.json())
   .then(data => {
-    const userList = document.getElementById('userList'); // 获取页面中的列表容器
-
-    // 清空列表内容
+    const userList = document.getElementById('userList');
     userList.innerHTML = '';
-    dd = data; // 将解析后的数据赋值给dd变量
+    dd = data;
 
-    // 确保dd变量在Layui表格组件中使用之前已经正确设置
     if (dd && dd.length > 0) {
       layui.use('table', function(){
         var table = layui.table;
 
-        // 执行渲染
         table.render({
           elem: '#test',
-          data: dd, // 直接绑定JSON数据
+          data: dd,
           cols: [[
+            {fixed: 'left', title:'操作', width: 134, minWidth: 125, toolbar: '#barDemo'},
             {field: 'id', title: '家庭编号'},
             {field: 'name', title: '家庭名'},
             {field: 'date', title: '家庭创建时间'},
           ]],
-              toolbar: '#toolbarDemo',
-    defaultToolbar: ['filter', 'exports', 'print', { // 右上角工具图标
-      title: '提示',
-      layEvent: 'LAYTABLE_TIPS',
-      icon: 'layui-icon-tips',
-      onClick: function(obj) { // 2.9.12+
-        layer.alert('自定义工具栏图标按钮');
-      }
-    }],
-    height: 'full-35', // 最大高度减去其他容器已占有的高度差
-    css: [ // 重设当前表格样式
-      '.layui-table-tool-temp{padding-right: 145px;}'
-    ].join(''),
-    cellMinWidth: 80,
-    totalRow: true, // 开启合计行
-    page: true,
+          cellMinWidth: 80,
+        });
+
+        // 将 table.on 移到这里
+        table.on('tool(test)', function(obj){
+          var data = obj.data;
+          if(obj.event === 'get_in'){
+            family_id = data.id;
+            // alert(family_id);
+            fetch('/get_in_family', {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == 'success') {
+                // 登录成功，跳转到menu.html
+                window.location.href = '/family_menu/'+family_id;
+                } else {
+                alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert('程序报错！');
+            });
+          }
         });
       });
     } else {
       console.error('dd变量未正确设置或为空，无法渲染表格');
     }
   })
-
   .catch(error => {
     console.error('获取数据失败:', error);
   });
@@ -74,6 +81,12 @@ fetch('/family_list')
 // 注意：在调用Layui表格组件之前，dd变量可能还没有被设置，因此你可能需要添加一个检查来确保dd变量已经包含了有效的数据。
 
 
+</script>
+
+<script type="text/html" id="barDemo">
+  <div class="layui-clear-space">
+    <a class="layui-btn layui-btn-xs" lay-event="get_in">进入</a>
+  </div>
 </script>
 </body>
 </html>

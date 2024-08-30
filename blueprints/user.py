@@ -167,6 +167,18 @@ def select_type(output):
 
     return jsonify(cata)
 
+@bp.route('/change',methods=['POST','get'])
+def index123Baa1112():
+    data = request.get_json()
+    print(data)
+    money = data.get('money')
+    detail = data.get('detail')
+    id = data.get('id')
+
+    sql = text('update USER_INOUT set UImoney=:money,UIdetail=:detail where UIid = :id')
+    db.session.execute(sql,{'money':money,'detail':detail,'id':id})
+    db.session.commit()
+    return jsonify({'status':'success'})
 
 
 @bp.route('/type/<output>',methods=['POST','get'])

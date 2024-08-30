@@ -164,8 +164,8 @@ var url = '/users';
         {field: 'is_in', title: '收入/支出'},
         {field: 'category', title: '类别'},
         {field: 'type', title: '子类别'},
-        {field: 'money', title: '金额'},
-        {field: 'detail', title: '备注'},
+        {field: 'money', title: '金额',edit: 'text'},
+        {field: 'detail', title: '备注',edit: 'text'},
     ]],
     done:function(){
     //alert("sss");
@@ -345,27 +345,59 @@ dropdown.render({
     var value = obj.value; // 得到修改后的值
     var data = obj.data; // 得到所在行所有键值
     // 值的校验
-    if(field === 'email'){
-      if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(obj.value)){
-        layer.tips('输入的邮箱格式不正确，请重新编辑', this, {tips: 1});
-        return obj.reedit(); // 重新编辑 -- v2.8.0 新增
-      }
-    }
+    // if(field === 'email'){
+    // if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(obj.value)){
+    // layer.tips('输入的邮箱格式不正确，请重新编辑', this, {tips: 1});
+    // return obj.reedit(); // 重新编辑 -- v2.8.0 新增
+    // }
+    // }
     // 编辑后续操作，如提交更新请求，以完成真实的数据更新
     // …
-    layer.msg('编辑成功', {icon: 1});
-
-    // 其他更新操作
+    switch(obj.field)
+    {
+    case 'money':
+        if(Number(value)>0){
+            change_data(data);
+            layer.msg('修改成功', {icon: 1})
+            var update = {};
+            update[field] = value;
+            obj.update(update);}
+        else{layer.msg('请输入一个正数', {icon: 1});
+        return obj.reedit();}
+        break;
+    case 'detail':
+    layer.msg('修改成功', {icon: 1});
     var update = {};
     update[field] = value;
     obj.update(update);
-  });
+    change_data(data);
+    break;
+    }
+    });
 
     }//done:function
         });
       });
 
-
+function change_data(value) {
+    fetch('change', {
+        method: 'POST', // 或者 'PUT'，根据你的需求
+        headers: {
+        'Content-Type': 'application/json',
+    },
+        body: JSON.stringify(value), // 将JavaScript对象转换为JSON字符串
+    })
+        .then(response => response.json()) // 解析JSON格式的响应体
+        .then(data => {
+        console.log('Success:', data);
+        // 这里可以添加成功提交后的处理逻辑
+    })
+        .catch((error) => {
+        console.error('Error:', error);
+        alert('失败');
+        // 这里可以添加错误处理逻辑
+    });
+    }
 // 注意：在调用Layui表格组件之前，dd变量可能还没有被设置，因此你可能需要添加一个检查来确保dd变量已经包含了有效的数据。
 
 

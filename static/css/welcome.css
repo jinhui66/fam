@@ -1,0 +1,27 @@
+/* 简单的页面样式 */
+body {
+    font-family: Arial, sans-serif; /* 设置字体 */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 设置高度为视窗的100% */
+    background-color: #f0f0f0; /* 设置背景颜色 */
+}
+
+.container {
+    text-align: center; /* 文本居中 */
+    padding: 20px;
+    background-color: white; /* 设置背景颜色 */
+    border-radius: 8px; /* 设置边框圆角 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 设置阴影效果 */
+}
+
+h1 {
+    color: #333; /* 设置标题颜色 */
+}
+
+p {
+    color: #666; /* 设置段落文字颜色 */
+}

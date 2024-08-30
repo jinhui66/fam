@@ -29,6 +29,15 @@ def family_list():
         # print(list)
     return jsonify(list)
 
+@bp.route('/get_in_family',methods=['GET','POST'])
+def get_in_family():
+    # print(family_id)
+    return jsonify({'status':'success'})
+
+@bp.route('/family_menu/<family_id>',methods=['GET','POST'])
+def family_menu(family_id):
+    return render_template('family_menu.html',family_id=family_id)
+
 # 邀请进入家庭
 @bp.route('/invite_family_action',methods=['GET','POST'])
 def invite_family_action():
