@@ -1,7 +1,14 @@
 
 body {
-    background: #179898 url(../img/bj.png) repeat;
-}
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    padding: 20px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    zoom: 85%;
+    }
+
 
 .login {
     box-shadow: 0px 0px 15px #ccc;
@@ -12,7 +19,7 @@ body {
     padding: 60px 80px;
     position: fixed;
     top: 50%;
-    left: 50%;
+    left: 45%;
     margin-top: -210px;
     margin-left: -205px;
 }
@@ -44,3 +51,5 @@ body {
 .layui-form-item .layui-input{
     padding-left: 24px;
 }
+
+
