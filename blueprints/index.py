@@ -18,7 +18,11 @@ def welcome():
 
 @bp.route('/test',methods=['GET','POST'])
 def test():
-    return render_template('test.html')
+    user_id = session.get('user_id')
+    sql = text('select Uaccount from USER where Uid = :user_id')
+    account = db.session.execute(sql,{'user_id':user_id}).fetchone()
+    account = account[0]
+    return render_template('test.html', account = account)
 
 @bp.route('/user_in',methods=['GET','POST'])
 def user_in():
@@ -97,6 +101,10 @@ def user_out():
 @bp.route('/get_family',methods=['GET','POST'])
 def get_family():
     return render_template('get_family.html')
+
+@bp.route('/invited_family',methods=['GET','POST'])
+def invited_family():
+    return render_template('invited_family.html')
 
 @bp.route('/families',methods=['GET','POST'])
 def families():

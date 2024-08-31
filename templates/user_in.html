@@ -13,8 +13,8 @@
 let globalData;
 let globalData2;
 let globalid;
-let url1 = 'select_category';
-let url2 = 'select_type';
+let url1 = '/select_category';
+let url2 = '/select_type/all';
 // 使用fetch获取数据并将其设置为全局变量
 
 async function fetchData(url) {
@@ -160,7 +160,8 @@ dropdown.render({
             dropdown.reload('reloadTest2', {data:globalData2});
         }, 500);
         globalid = obj.id;
-        }}
+        };
+    }
     });
 
 dropdown.render({
@@ -170,12 +171,16 @@ dropdown.render({
     click: function(obj){
         switch(obj.id){
         case 'all':
-        url = '/type_in';
+        url = '/category_in';
         table.reload('test', {url: url+'/'+globalid});
+        break;
+        case 'allall':
+        url = '/users_in';
+        table.reload('test', {url: url});
         break;
         default:
             //alert(url);
-        url = '/category_in'
+        url = '/type_in'
         table.reload('test', {url: url+'/'+obj.id});
 
         }}

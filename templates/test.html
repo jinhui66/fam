@@ -12,8 +12,8 @@
 let globalData;
 let globalData2;
 let globalid;
-let url1 = 'select_category';
-let url2 = 'select_type';
+let url1 = '/select_category';
+let url2 = '/select_type/all';
 // 使用fetch获取数据并将其设置为全局变量
 
 async function fetchData(url) {
@@ -130,6 +130,7 @@ function deleteData(id) {
         <span>行模式</span>
         <i class="layui-icon layui-icon-down layui-font-12"></i>
     </button>
+    账号: {{account}}
     </div>
 </script>
 <script type="text/html" id="barDemo">
@@ -223,7 +224,7 @@ dropdown.render({
     click: function(obj){
         switch(obj.id){
         case 'all':
-        url = '/type';
+        url = '/category';
         table.reload('test', {url: url+'/'+globalid});
         break;
         case 'allall':
@@ -232,10 +233,12 @@ dropdown.render({
         break;
         default:
             //alert(url);
-        url = '/category'
+        url = '/type'
+        // alert(obj.id);
         table.reload('test', {url: url+'/'+obj.id});
 
-        }}
+        };
+    }
     });
 
 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>邀请账号</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        width: 300px;
+    }
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+    label {
+        display: block;
+        margin-top: 10px;
+        color: #666;
+    }
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box; /* Added for better input sizing */
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #4cae4c;
+    }
+</style>
+<script>
+function inviteUser() {
+    var account = document.getElementById('account').value.trim();
+    if (account === "") {
+        alert('账号不能为空，请输入账号。');
+        return; // 阻止函数继续执行
+    }
+
+    fetch('/invite_family_action', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ account: account,family_id:{{family_id}} })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status == 'success') {
+        // 登录成功，跳转到menu.html
+        alert('邀请成功');
+        } else {
+        alert(data.message);
+        }
+    })
+    .catch(error => {
+        alert('程序报错！');
+    });
+
+}
+</script>
+</head>
+<body>
+<div class="container">
+    <h2>邀请账号</h2>
+    <label for="account">账号:</label>
+    <input type="text" id="account" name="account">
+    <button onclick="inviteUser()">邀请</button>
+</div>
+</body>
+</html>

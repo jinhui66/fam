@@ -114,7 +114,7 @@ def users_out():
             "detail": row[5]
         })
     # print(list)
-
+    # print('user_out')
     response = {
         "code": 0,  # 成功状态码
         "msg": "",  # 消息字段
@@ -185,9 +185,9 @@ def index123Baa1112():
 
 @bp.route('/type/<output>',methods=['POST','get'])
 def type(output):
-        # print(output)
+    print(output)
     user_id = session.get('user_id')
-    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id ORDER BY UIid DESC;')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid where :output = T.Tid and UI.Uid = :user_id ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
     list = []
     for row in result:
@@ -226,7 +226,7 @@ def type(output):
 def type_in(output):
         # print(output)
     user_id = session.get('user_id')
-    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id and UI.UIisin = 1 ORDER BY UIid DESC;')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid where :output = T.Tid and UI.Uid = :user_id and UI.UIisin = 1 ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
     list = []
     for row in result:
@@ -265,7 +265,7 @@ def type_in(output):
 def type_out(output):
         # print(output)
     user_id = session.get('user_id')
-    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id and UI.UIisin = 0 ORDER BY UIid DESC;')
+    sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid where :output = T.Tid and UI.Uid = :user_id and UI.UIisin = 0 ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
     list = []
     for row in result:
@@ -378,7 +378,7 @@ def category_in(output):
 
 @bp.route('/category_out/<output>',methods=['POST','get'])
 def category_out(output):
-    # print(output)
+
     user_id = session.get('user_id')
     sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and UI.Uid = :user_id and UIisin = 0 ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
