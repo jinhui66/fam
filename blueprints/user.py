@@ -6,6 +6,8 @@ import hashlib
 import json
 import os
 import time
+import plotly.graph_objects as go
+
 
 bp = Blueprint('user',__name__,url_prefix="/")
 
