@@ -1,4 +1,97 @@
 <!DOCTYPE html>
 <html>
-    <h1> 这是家庭主页，家庭编号为{{family_id}} </h1>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="../static/css/layui1.css" rel="stylesheet">
+</head>
+<body>
+ <script>
+ function myFunction()
+{
+    window.location.href = '/families';
+}
+//alert(localStorage.getItem('family_id'));
+let globalData;
+
+// 使用fetch获取数据并将其设置为全局变量
+async function fetchData(url) {
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+;
+    const data = await response.json();
+    // 将获取的数据设置为全局变量
+    globalData = data;
+
+    console.log('Data fetched and set as global variable:', globalData);
+  } catch (error) {
+    console.error('Fetching data failed:', error);
+  }
+}
+
+function init(){
+
+    fetchData('/select_category');
+
+    setTimeout(function() {
+    reloadTable('test1',globalData);
+    }, 100);
+    console.log(globalData);
+}
+
+init();//------------------------初始化
+function reloadTable(id,data) {
+  layui.use('table', function(){
+    var table = layui.table;
+    table.reload(id,{data:data}); // 重新加载表格
+  });
+}
+</script>
+<div>
+  <button type="button" class="layui-btn layui-btn-sm" onclick="myFunction()">
+    <i class="layui-icon layui-icon-return"></i>返回
+  </button>
+</div>
+<div style="padding: 16px;">
+  <table class="layui-hide" id="test1" lay-filter="test1"></table>
+</div>
+  <h1> 这是家庭主页，家庭编号为{{family_id}} </h1>
+
+<script type="text/html" id="barDemo">
+  <div class="layui-clear-space">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs" lay-event="more">
+      更多
+      <i class="layui-icon layui-icon-down"></i>
+    </a>
+  </div>
+</script>
+<script src="../static/js/layui.js"></script>
+</body>
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        table.render({
+          elem: '#test1',
+          data: globalData,
+          cols: [[
+            {fixed: 'left', title:'操作', width: 134, minWidth: 125, toolbar: '#barDemo'},
+            {field: 'id', title: '家庭编号'},
+            {field: 'name', title: '家庭名'},
+            {field: 'date', title: '家庭创建时间'},
+          ]],
+          cellMinWidth: 80,
+          page:false,//
+          limit:3//----------------------------------------分页的每页数量
+        });
+
+        // 将 table.on 移到这里
+
+      });
+</script>
 </html>
