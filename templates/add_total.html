@@ -1,10 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>收支记录表单</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+  }
+  .form-container {
+    background: #fff;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .form-group {
+    margin-bottom: 15px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  button {
+    padding: 10px 20px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #4cae4c;
+  }
+</style>
 </head>
 <body>
-<div>先这样</div>
+
+
+<div class="form-container">
+<h2>收支记录表单</h2>
+<form id="expenseForm" onsubmit="return handleSubmit();">
+    <div class="form-group">
+    <label for="is_in">收入/支出:</label>
+    <select id="is_in" name="is_in" onchange="updateOptions()">
+        <option value="支出">支出</option>
+        <option value="收入">收入</option>
+    </select>
+    </div>
+    <div class="form-group" id="categoryContainer">
+    <label for="category">类别:</label>
+    <select id="category" name="category" onchange='updateTypes()'>
+        <!-- 选项将根据收入/支出动态插入 -->
+    </select>
+    </div>
+    <div class="form-group" id="subCategoryContainer">
+    <label for="type">子类别:</label>
+    <select id="type" name="type">
+        <!-- 选项将根据类别动态插入 -->
+    </select>
+    </div>
+    <div class="form-group">
+    <label for="money">金额:</label>
+    <input type="text" id="money" name="money" placeholder="请输入金额" oninput="validateMoneyInput(this)">
+    </div>
+    <div class="form-group">
+    <label for="detail">备注:</label>
+    <input type="text" id="detail" name="detail" placeholder="请输入备注">
+    </div>
+    <button type="submit" onclick="closeIframeLayer()">提交记录</button>
+</form>
+</div>
+
+
+<script>
+    function updateOptions() {
+        fetch('/select_category')
+            .then(response => response.json())
+            .then(data => {
+                const categorySelect = document.getElementById('category');
+                // 清空现有选项
+                categorySelect.innerHTML = '';
+                // 添加新选项
+                data.forEach(category => {
+                    const option = document.createElement('option');
+                    if (category.id != 'all'){
+                        option.value = category.id;
+                        option.text = category.title;
+                        categorySelect.appendChild(option);
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching categories:', error));
+    }
+
+    function updateTypes() {
+        const categoryId = document.getElementById('category').value;
+        fetch(`/select_type/${categoryId}`)
+            .then(response => response.json())
+            .then(data => {
+                // 清空现有的子类别选项
+                const typeSelect = document.getElementById('type');
+                typeSelect.innerHTML = '';
+
+                // 添加新的子类别选项
+                data.forEach(type => {
+                    const option = document.createElement('option');
+                    if (type.id != 'all'){
+                        option.value = type.id;
+                        option.text = type.title;
+                        typeSelect.appendChild(option);
+                    }
+                });
+
+                // 如果有需要，可以在这里添加额外的逻辑，比如默认选择第一个子类别
+                if (typeSelect.options.length > 0) {
+                    typeSelect.selectedIndex = 0; // 默认选择第一个选项
+                }
+            })
+            .catch(error => console.error('Error fetching types:', error));
+    }
+
+    // 页面加载时设置初始类别和类型
+    window.onload = function() {
+        updateOptions();
+        setTimeout(function() {
+            updateTypes();
+        }, 500);
+
+    };
+
+    // 提交表单处理（这里只是阻止表单默认提交行为）
+    function handleSubmit() {
+        var moneyInput = document.getElementById('money');
+        if (moneyInput.value.trim() === '') {
+          alert('金额不能为空！');
+          moneyInput.focus();
+          return false;
+        }
+        return True;
+    }
+
+    // 假设的关闭 iframe 层的函数
+    function closeIframeLayer() {
+        var formData = {
+        is_in: document.getElementById('is_in').value,
+        category: document.getElementById('category').value,
+        type: document.getElementById('type').value,
+        money: document.getElementById('money').value,
+        detail: document.getElementById('detail').value
+    };
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.iframeAuto(index); // 确保iframe自适应大小
+        parent.layer.iframeSrc(index, 'add_total_data');
+        parent.onInputValueReceived(formData);
+
+        // 关闭包含iframe的层
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+    }
+
+    function validateMoneyInput(inputElement) {
+        var regex = /^\d*(\.\d{0,2})?$/; // 正则表达式，匹配数字，最多两位小数
+        if (!regex.test(inputElement.value)) {
+          alert('金额格式不正确，请输入数字，最多两位小数。');
+          inputElement.value = inputElement.value.slice(0, -1); // 移除最后一个字符
+          inputElement.focus();
+        }
+      }
+</script>
 </body>
 </html>

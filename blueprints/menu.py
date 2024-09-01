@@ -65,11 +65,12 @@ def register_action():
     else:
         data = request.get_json()
         account = data.get('account')
+        name = data.get('name')
         password = data.get('password')
         password2 = data.get('password2')
         captcha = data.get('captcha')
 
-        if not account or not password or not password2 or not captcha:
+        if not account or not password or not password2 or not captcha or not name:
             return jsonify({'status':'', 'message':'请填写完整'})
         # 条件判断
         sql = text('select * from USER where Uaccount = :account')
@@ -91,8 +92,8 @@ def register_action():
                     return jsonify({'status': '', 'message': '验证码错误'})
                 connection.commit()
 
-            sql = text('insert into USER(Uaccount,Upassword) value(:account, :password)')
-            db.session.execute(sql, {'account': account, 'password':password})
+            sql = text('insert into USER(Uaccount,Upassword,Uname) value(:account, :password, :name)')
+            db.session.execute(sql, {'account': account, 'password':password, 'name':name})
             db.session.commit()
             return jsonify({'status': 'success', 'message': '注册成功'})
 

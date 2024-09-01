@@ -90,7 +90,7 @@ function reloadTable(id,data) {
             if(obj.event === 'get_in'){
             family_id = data.id;
             // alert(family_id);
-            fetch('/get_in_family', {
+            fetch('/get_in_family/'+family_id, {
                 method: 'GET',
             })
             .then(response => response.json())

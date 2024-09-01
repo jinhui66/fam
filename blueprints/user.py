@@ -156,10 +156,10 @@ def select_type(output):
             'id': 'all',
             'title': '全部'}
             ]
-    print('output',output)
+    # print('output',output)
     sql = text('select * from TYPE T where T.Cid = :output')
     category = db.session.execute(sql,{'output':output}).fetchall()
-    print(category)
+    # print(category)
     for row in category:
         # print(row)
         cata.append({
@@ -170,9 +170,8 @@ def select_type(output):
     return jsonify(cata)
 
 @bp.route('/change',methods=['POST','get'])
-def index123Baa1112():
+def change():
     data = request.get_json()
-    print(data)
     money = data.get('money')
     detail = data.get('detail')
     id = data.get('id')
@@ -418,6 +417,7 @@ def category_out(output):
 def index123B():
     return render_template("inp.html")
 
+
 @bp.route('/receive',methods=['POST','get'])
 def receive_add_data():
     data = request.get_json()
@@ -445,31 +445,3 @@ def index123Baa111(output):
     db.session.execute(sql,{'output':output})
     db.session.commit()
     return '数据删除成功', 200
-
-# @bp.route('/insert_user_action',methods=['GET','POST'])
-# def insert_user_action():
-#     if request.method == 'GET':
-#         pass
-#     else:
-#         data = request.get_json()
-
-#         money = data.get('money')
-#         type_id = data.get('type_id')
-#         date = data.get('date')
-#         detail = data.get('detail')
-
-#         user_id = session.get('user_id')
-
-#         is_out = data.get('is_out')
-#         if is_out:
-#             sql = text('insert into USER_OUT(Uid,UOmoney,Tid,UOdate,UOdetail) value(:user_id, :money, :type_id, :date, :detail)')
-#             db.session.execute(sql,{'user_id':user_id, 'money':money, 'type_id':type_id, 'date':date, 'detail':detail})
-#             db.session.commit()
-#             return
-#         else:
-#             sql = text('insert into USER_OUT(Uid,UImoney,Tid,UIdate,UIdetail) value(:user_id, :money, :type_id, :date, :detail)')
-#             db.session.execute(sql,{'user_id':user_id, 'money':money, 'type_id':type_id, 'date':date, 'detail':detail})
-#             db.session.commit()
-#             return
-
-

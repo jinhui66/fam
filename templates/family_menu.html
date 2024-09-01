@@ -17,10 +17,11 @@
 //---------------------------------------------------table的数据
 let globalData1;
 let globalData2;
+
 // 使用fetch获取数据并将其设置为全局变量
 async function fetchData1(url) {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url+'/'+{{family_id}});
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -34,13 +35,14 @@ async function fetchData1(url) {
 }
 async function fetchData2(url) {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url+'/'+{{family_id}});
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
     // 将获取的数据设置为全局变量
     globalData2 = data;
+
     console.log('Data fetched and set as global variable:', globalData2);
   } catch (error) {
     console.error('Fetching data failed:', error);
@@ -66,9 +68,47 @@ function reloadTable(id,data) {
 }
 //----------------------------------------------------------修改删除增加数据函数
 
+
+function onInputValueReceived(value) {
+    console.log('接收到的值:', value);
+    sendDataToServer(value);
+}
+
+
+function sendDataToServer(value) {
+
+    fetch('/receive_total', {
+        method: 'POST', // 或者 'PUT'，根据你的需求
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(value), // 将JavaScript对象转换为JSON字符串
+    })
+    .then(response => response.json()) // 解析JSON格式的响应体
+    .then(data => {
+        console.log('Success');
+        var table = layui.table;
+
+        fetchData2('/family_data2');
+
+        setTimeout(function() {
+            reloadTable('test2',globalData2);
+        }, 1000);
+
+        // 这里可以添加成功提交后的处理逻辑
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // 这里可以添加错误处理逻辑
+    });
+
+    }
+
+
+
 function deleteData(id) {
   // 发送DELETE请求到Flask后端路由
-  fetch('/delete_family/' + id, {
+  fetch('/delete_total/' + id, {
     method: 'POST'
   })
   .then(response => {
@@ -82,7 +122,7 @@ function deleteData(id) {
   .catch(error => console.error('Error:', error));
 }
 function change_data(value) {
-  fetch('change', {
+  fetch('/change_total', {
     method: 'POST', // 或者 'PUT'，根据你的需求
     headers: {
       'Content-Type': 'application/json',
@@ -130,7 +170,6 @@ function change_data(value) {
  <div style="padding: 16px;">
   <table class="layui-hide" id="test2" lay-filter="test2"></table>
 </div>
-  <h1> 这是家庭主页，家庭编号为{{family_id}} </h1>
  <script type="text/html" id="barDemo">
   <div class="layui-clear-space">
     <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
@@ -145,16 +184,13 @@ function change_data(value) {
           elem: '#test1',
           data: globalData1,
           cols: [[
-            {field: 'Field', title: 'Field'},
-            {field: 'Fid', title: 'Fid'},
-            {field: 'Flmoney', title: 'Flmoney'},
-            {field: 'Tid', title: 'Tid'},
-            {field: 'Fldate', title: 'Fldate'},
-            {field: 'Flishin', title: 'Flishin'}
+            {field: 'name', title: '家庭成员'},
+            {field: 'in', title: '收入'},
+            {field: 'out', title: '支出'},
           ]],
           cellMinWidth: 80,
           page:true,//
-          limit:3//----------------------------------------分页的每页数量
+          limit:10//----------------------------------------分页的每页数量
         });
         table.render({
           toolbar: '#toolbarDemo',
@@ -162,20 +198,18 @@ function change_data(value) {
           elem: '#test2',
           data: globalData2,
           cols: [[
-
-            {field: 'Uid', title: 'Uid'},
-            {field: 'Tid', title: 'Tid'},
-            {field: 'Ulisin', title: 'Ulisin'},
-            {field: 'Year', title: 'Year'},
-            {field: 'Month', title: 'Month'},
-            {field: 'TotalMoney', title: 'TotalMoney',edit: 'text'},
-            {field: 'Detail', title: 'Detail',edit: 'text'},
+            {field: 'time', title: '时间'},
+            {field: 'is_in', title: '收入/支出'},
+            {field: 'category', title: '类别'},
+            {field: 'type', title: '子类别'},
+            {field: 'money', title: '金额',edit: 'text'},
+            {field: 'detail', title: '细节',edit: 'text'},
             {fixed: 'right', title:'操作', width: 134, minWidth: 125, toolbar: '#barDemo'},
 
           ]],
           cellMinWidth: 80,
           page:true,//
-          limit:3,//----------------------------------------分页的每页数量
+          limit:10,//----------------------------------------分页的每页数量
           done:function(){
              var $ = layui.jquery;
                 $('#add').on('click', function(){
@@ -191,14 +225,14 @@ function change_data(value) {
             var data = obj.data; // 获得当前行数据
             layer.confirm('真的删除行 [id: '+ data.id +'] 么', function(index){
               obj.del(); // 删除对应行（tr）的DOM结构
-              deleteData(3);
+              deleteData(data.id);
               layer.close(index);});});
 
 
            table.on('edit(test2)', function(obj){
-    var field = obj.field; // 得到字段
-    var value = obj.value; // 得到修改后的值
-    var data = obj.data; // 得到所在行所有键值
+                var field = obj.field; // 得到字段
+                var value = obj.value; // 得到修改后的值
+                var data = obj.data; // 得到所在行所有键值
     // 值的校验
    // if(field === 'email'){
    //   if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(obj.value)){
@@ -210,19 +244,19 @@ function change_data(value) {
     // …
     switch(obj.field)
     {
-     case 'TotalMoney':
-     console.log(typeof(value));console.log(typeof(Number(value)));console.log(isNaN(Number(value)));
-     if(!isNaN(Number(value))&&Number(value)>0){layer.msg('编辑成功', {icon: 1});change_data(data);
-    var update = {};
-    update[field] = value;
-    obj.update(update);}else{alert(value);layer.msg('请输入一个正数', {icon: 1});return obj.reedit();}break;
-    case 'Detail':
-    layer.msg('', {icon: 1,skin: 'layui-layer-lan',content: '<i style="color: #1E9FFF; font-size: 24px;" class="layui-icon layui-icon-ok"></i> <i style="font-size: 20px;">修改成功</i>'});
-    var update = {};
-    update[field] = value;
-    obj.update(update);
-    change_data(data);
-    break;
+    case 'money':
+        console.log(typeof(value));console.log(typeof(Number(value)));console.log(isNaN(Number(value)));
+        if(!isNaN(Number(value))&&Number(value)>0){layer.msg('编辑成功', {icon: 1});change_data(data);
+        var update = {};
+        update[field] = value;
+        obj.update(update);}else{alert(value);layer.msg('请输入一个正数', {icon: 1});return obj.reedit();}break;
+    case 'detail':
+        layer.msg('', {icon: 1,skin: 'layui-layer-lan',content: '<i style="color: #1E9FFF; font-size: 24px;" class="layui-icon layui-icon-ok"></i> <i style="font-size: 20px;">修改成功</i>'});
+        var update = {};
+        update[field] = value;
+        obj.update(update);
+        change_data(data);
+        break;
     }
   });
 

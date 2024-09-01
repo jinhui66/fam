@@ -214,7 +214,7 @@ dropdown.render({
             dropdown.reload('reloadTest2', {data:globalData2});
         }, 500);
         globalid = obj.id;
-        }}
+        };}
     });
 
 dropdown.render({
@@ -366,7 +366,7 @@ dropdown.render({
     case 'money':
         if(Number(value)>0){
             change_data(data);
-            layer.msg('修改成功', {icon: 1})
+
             var update = {};
             update[field] = value;
             obj.update(update);}
@@ -397,12 +397,12 @@ function change_data(value) {
     })
         .then(response => response.json()) // 解析JSON格式的响应体
         .then(data => {
-        console.log('Success:', data);
+            layer.msg('修改成功', {icon: 1})
         // 这里可以添加成功提交后的处理逻辑
     })
         .catch((error) => {
         console.error('Error:', error);
-        alert('失败');
+            layer.msg('修改失败', {icon: 1})
         // 这里可以添加错误处理逻辑
     });
     }
