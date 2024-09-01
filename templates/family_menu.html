@@ -6,8 +6,25 @@
     <title>Title</title>
         <link rel="stylesheet" href="../static/layui/css/layui.css">
   <link href="../static/css/layui1.css" rel="stylesheet">
+  <link href="../static/css/chart.css" rel="stylesheet">
 </head>
 <body>
+<div class="chart-container">
+    <div class="pie-chart-container">
+        <div>{{plot_div2 | safe}}</div>
+    </div>
+    <div class="bar-chart-container">
+        <div>{{plot_div1 | safe}}</div>
+    </div>
+</div>
+<div class="chart-container">
+    <div class="pie-chart-container">
+        <div>{{plot_div4 | safe}}</div>
+    </div>
+    <div class="bar-chart-container">
+        <div>{{plot_div3 | safe}}</div>
+    </div>
+</div>
  <script>
  function myFunction()
 {
@@ -17,25 +34,28 @@
 //---------------------------------------------------table的数据
 let globalData1;
 let globalData2;
+let globalData3;
+let globalData4;
+let globalid;
 
 // 使用fetch获取数据并将其设置为全局变量
 async function fetchData1(url) {
   try {
-    const response = await fetch(url+'/'+{{family_id}});
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
     // 将获取的数据设置为全局变量
     globalData1 = data;
-    console.log('Data fetched and set as global variable:', globalData1);
+    console.log('Data1 fetched and set as global variable:', globalData1);
   } catch (error) {
     console.error('Fetching data failed:', error);
   }
 }
 async function fetchData2(url) {
   try {
-    const response = await fetch(url+'/'+{{family_id}});
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -43,19 +63,51 @@ async function fetchData2(url) {
     // 将获取的数据设置为全局变量
     globalData2 = data;
 
-    console.log('Data fetched and set as global variable:', globalData2);
+    console.log('Data2 fetched and set as global variable:', globalData2);
   } catch (error) {
     console.error('Fetching data failed:', error);
   }
 }
+async function fetchData3(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    // 将获取的数据设置为全局变量
+    globalData3 = data;
+    console.log('Data3 fetched and set as global variable:', globalData3);
+  } catch (error) {
+    console.error('Fetching data failed:', error);
+  }
+}
+async function fetchData4(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    // 将获取的数据设置为全局变量
+    globalData4 = data;
+    console.log('Data4 fetched and set as global variable:', globalData4);
+  } catch (error) {
+    console.error('Fetching data failed:', error);
+  }
+}
+
+fetchData3('/select_category');
+fetchData4('/select_type/all');
 function init(){
 fetchData1('/family_data1');
 fetchData2('/family_data2');
-console.log(1);
+
 setTimeout(function() {
+    console.log(globalData1);
   reloadTable('test1',globalData1);
   reloadTable('test2',globalData2);
-}, 100);
+}, 1000);
 console.log(globalData1);
 console.log(globalData2);
 }
@@ -66,6 +118,14 @@ function reloadTable(id,data) {
     table.reload(id,{data:data}); // 重新加载表格
   });
 }
+function reloadDropdown(id,data) {
+  layui.use('dropdown', function(){
+    var dropdown = layui.dropdown;
+    dropdown.reload(id,{data:data}); // 重新加载表格
+  });
+}
+
+
 //----------------------------------------------------------修改删除增加数据函数
 
 
@@ -151,6 +211,14 @@ function change_data(value) {
       添加
       <i class="layui-icon layui-icon-add-1 "></i>
     </button>
+          <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest">
+        大类筛选
+        <i class="layui-icon layui-icon-down layui-font-12"></i>
+    </button>
+    <button class="layui-btn layui-btn-sm layui-bg-blue" id="reloadTest2">
+        小类筛选
+        <i class="layui-icon layui-icon-down layui-font-12"></i>
+    </button>
   </div>
 </script>
 <div style="padding: 15px;">
@@ -174,8 +242,9 @@ function change_data(value) {
   <div class="layui-clear-space">
     <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
   </div>
+
 </script>
-<script src="../static/layui/layui.js"></script>
+<script src="../static/js/layui.js"></script>
 </body>
 <script>
     layui.use('table', function(){
@@ -227,6 +296,69 @@ function change_data(value) {
               obj.del(); // 删除对应行（tr）的DOM结构
               deleteData(data.id);
               layer.close(index);});});
+
+
+         dropdown = layui.dropdown;
+        dropdown.render({
+            elem: '#reloadTest', // 可绑定在任意元素中，此处以上述按钮为例
+            data: globalData3,
+            // 菜单被点击的事件
+            click: function(obj){
+                switch(obj.id){
+                case 'all':
+                fetchData2('/family_data2');
+                fetchData4('/select_type/'+obj.id);
+                setTimeout(function() {
+                console.log(globalData4);
+                    dropdown.reload('reloadTest2', {data:globalData4});
+                    table.reload('test2',{data:globalData2});
+                }, 1000);
+
+                break;
+                default:
+                    //alert(url);
+                fetchData2('/family_category/'+obj.id);
+                fetchData4('/select_type/'+obj.id);
+                setTimeout(function() {
+                console.log(globalData4);
+                    dropdown.reload('reloadTest2', {data:globalData4});
+                    table.reload('test2',{data:globalData2});
+                }, 1000);
+                globalid = obj.id;
+                };
+            }
+            });
+
+        dropdown.render({
+            elem: '#reloadTest2', // 可绑定在任意元素中，此处以上述按钮为例
+            data: globalData4,
+            // 菜单被点击的事件
+            click: function(obj){
+                switch(obj.id){
+                case 'all':
+                fetchData2('/family_category/'+globalid);
+                setTimeout(function() {
+                console.log(globalData4);
+                    table.reload('test2',{data:globalData2});
+                }, 500);
+                break;
+                case 'allall':
+                fetchData2('/family_data2');
+                setTimeout(function() {
+                    table.reload('test2',{data:globalData2});
+                }, 1000);
+                break;
+                default:
+                fetchData2('/family_type/'+obj.id);
+                setTimeout(function() {
+                    table.reload('test2',{data:globalData2});
+                }, 1000);
+                };
+            }
+            });
+
+
+
 
 
            table.on('edit(test2)', function(obj){

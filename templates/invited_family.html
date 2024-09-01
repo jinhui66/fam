@@ -105,13 +105,12 @@ function change_data(value,url) {
         table.on('tool(test)', function(obj){
             var data = obj.data;
             if(obj.event === 'get_in'){
-
             change_data(data,'/change_invite_ok');
             }
             else{
             change_data(data,'/change_invite_no');
             }
-             obj.del();
+            obj.del();
             });
 
         });

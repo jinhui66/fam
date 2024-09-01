@@ -19,10 +19,10 @@ def welcome():
 @bp.route('/test',methods=['GET','POST'])
 def test():
     user_id = session.get('user_id')
-    sql = text('select Uaccount from USER where Uid = :user_id')
-    account = db.session.execute(sql,{'user_id':user_id}).fetchone()
-    account = account[0]
-    return render_template('test.html', account = account)
+    sql = text('select Uaccount,Uname from USER where Uid = :user_id')
+    result = db.session.execute(sql,{'user_id':user_id}).fetchone()
+    name = result[1]
+    return render_template('test.html', name = name)
 
 @bp.route('/user_in',methods=['GET','POST'])
 def user_in():

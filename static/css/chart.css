@@ -5,7 +5,6 @@
   }
 
   .pie-chart-container, .bar-chart-container {
-    flex: 1; /* 使两个容器各占一半的空间 */
     height: 100%; /* 使容器高度充满父容器 */
     overflow: hidden; /* 防止内容溢出容器 */
     /* 可以添加边框或间距来更好地看到分隔 */
