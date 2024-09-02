@@ -13,7 +13,7 @@ bp = Blueprint('family',__name__,url_prefix="/")
 
 @bp.route('/family_type/<output>',methods=['POST','get'])
 def family_type(output):
-    print(output)
+    # print(output)
     family_id = session.get('family_id')
     sql = text('select * from FAMILY_INOUT FI join TYPE T on T.Tid = FI.Tid where :output = T.Tid and FI.Fid = :family_id ORDER BY FIid DESC;')
     result = db.session.execute(sql,{'output':output,'family_id':family_id}).fetchall()
@@ -44,7 +44,7 @@ def family_type(output):
 
 @bp.route('/family_category/<output>',methods=['POST','get'])
 def family_category(output):
-    print(output)
+    # print(output)
     family_id = session.get('family_id')
     sql = text('select * from FAMILY_INOUT FI join TYPE T on T.Tid = FI.Tid join CATEGORY C on C.Cid = T.Cid where :output = C.Cid and FI.Fid = :family_id ORDER BY FIid DESC;')
     result = db.session.execute(sql,{'output':output,'family_id':family_id}).fetchall()
@@ -243,12 +243,12 @@ def receive_total_add_data():
         is_in = 1
     else:
         is_in = 0
-    print(data)
+    # print(data)
     type = data.get('type')
     money = data.get('money')
     detail = data.get('detail')
     user_id = session.get('user_id')
-    print('receive')
+    # print('receive')
     sql = text('insert into FAMILY_INOUT(Fid,Uid,FImoney,Tid,FIdetail,FIisin) value(:family_id, :user_id,:money,:type,:detail,:is_in)')
     db.session.execute(sql,{'family_id':family_id,'user_id':user_id,'money':money,'type':type,'detail':detail,'is_in':is_in})
     db.session.commit()

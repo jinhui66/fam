@@ -134,7 +134,7 @@ def select_category():
 
     sql = text('select * from CATEGORY')
     category = db.session.execute(sql).fetchall()
-    print(category)
+    # print(category)
     for row in category:
         # print(row)
         cata.append({
@@ -184,7 +184,7 @@ def change():
 
 @bp.route('/type/<output>',methods=['POST','get'])
 def type(output):
-    print(output)
+    # print(output)
     user_id = session.get('user_id')
     sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid where :output = T.Tid and UI.Uid = :user_id ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
@@ -431,7 +431,7 @@ def receive_add_data():
     money = data.get('money')
     detail = data.get('detail')
     user_id = session.get('user_id')
-    print('receive')
+    # print('receive')
     sql = text('insert into USER_INOUT(Uid,UImoney,Tid,UIdetail,UIisin) value(:user_id,:money,:type,:detail,:is_in)')
     db.session.execute(sql,{'user_id':user_id,'money':money,'type':type,'detail':detail,'is_in':is_in})
     db.session.commit()
@@ -440,7 +440,7 @@ def receive_add_data():
 
 @bp.route('/delete/<output>',methods=['POST','get'])
 def index123Baa111(output):
-    print('删除ID:',output)
+    # print('删除ID:',output)
     sql = text('delete from USER_INOUT where UIid = :output')
     db.session.execute(sql,{'output':output})
     db.session.commit()
