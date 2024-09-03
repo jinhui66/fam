@@ -124,7 +124,7 @@ def forget_action():
                 connection.execute(text("call COMPARE_CAPTCHA(:account, :captcha, @is_true);"), {'account':account, 'captcha':captcha})
                 # 检查会话变量 @is_true
                 captcha_model = connection.execute(text("SELECT @is_true;")).fetchone()
-                print(captcha_model[0])
+                # print(captcha_model[0])
 
                 if captcha_model[0] == 0:
                     return jsonify({'status': '', 'message': '验证码错误'})
