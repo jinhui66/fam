@@ -7,6 +7,25 @@
         <link rel="stylesheet" href="../static/layui/css/layui.css">
   <link href="../static/css/layui1.css" rel="stylesheet">
   <link href="../static/css/chart.css" rel="stylesheet">
+  <style>
+    .asset-summary {
+        background-color: #16baaa;
+        border: 4px solid #16baaa; /* 绿色边框 */
+        border-radius: 20px; /* 圆角边框 */
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: left; /* 文本左对齐 */
+    }
+    .asset-summary h1 {
+        margin: 0 0 20px 0; /* 大标题下边距 */
+        color: #fff;
+        font-size: 48px;
+    }
+    .currency {
+        color: #fff; /* 绿色字体 */
+        font-weight: bold;
+    }
+    </style>
 </head>
 <body>
 <div class="chart-container">
@@ -25,6 +44,7 @@
         <div>{{plot_div3 | safe}}</div>
     </div>
 </div>
+
  <script>
  function myFunction()
 {
@@ -223,8 +243,12 @@ function change_data(value) {
 </script>
 <div style="padding: 15px;">
       <blockquote class="layui-elem-quote layui-text">
-        家庭成员收支
+        <div class="asset-summary">
+            <h1>家庭资产汇总</h1>
+            <div style="color: #fff;">总资产：</div><div><br><span class="currency">￥{{asset}}</span></div>
+        </div>
       </blockquote>
+
       </div>
 <div style="padding: 16px;">
   <table class="layui-hide" id="test1" lay-filter="test1"></table>
@@ -365,15 +389,7 @@ function change_data(value) {
                 var field = obj.field; // 得到字段
                 var value = obj.value; // 得到修改后的值
                 var data = obj.data; // 得到所在行所有键值
-    // 值的校验
-   // if(field === 'email'){
-   //   if(!/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(obj.value)){
-   //     layer.tips('输入的邮箱格式不正确，请重新编辑', this, {tips: 1});
-    //    return obj.reedit(); // 重新编辑 -- v2.8.0 新增
-    //  }
-   // }
-    // 编辑后续操作，如提交更新请求，以完成真实的数据更新
-    // …
+
     switch(obj.field)
     {
     case 'money':

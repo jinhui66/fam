@@ -52,31 +52,35 @@
 <h2>收支记录表单</h2>
 <form id="expenseForm" onsubmit="return handleSubmit();">
     <div class="form-group">
-    <label for="is_in">收入/支出:</label>
-    <select id="is_in" name="is_in" onchange="updateOptions()">
+        <label for="dateTime">日期和时间:</label>
+        <input type="datetime-local" id="dateTime" name="dateTime" required>
+    </div>
+    <div class="form-group">
+        <label for="is_in">收入/支出:</label>
+        <select id="is_in" name="is_in" onchange="updateOptions()">
         <option value="支出">支出</option>
         <option value="收入">收入</option>
     </select>
     </div>
-    <div class="form-group" id="categoryContainer">
-    <label for="category">类别:</label>
-    <select id="category" name="category" onchange='updateTypes()'>
-        <!-- 选项将根据收入/支出动态插入 -->
-    </select>
+        <div class="form-group" id="categoryContainer">
+        <label for="category">类别:</label>
+        <select id="category" name="category" onchange='updateTypes()'>
+            <!-- 选项将根据收入/支出动态插入 -->
+        </select>
     </div>
     <div class="form-group" id="subCategoryContainer">
-    <label for="type">子类别:</label>
-    <select id="type" name="type">
-        <!-- 选项将根据类别动态插入 -->
-    </select>
+        <label for="type">子类别:</label>
+        <select id="type" name="type">
+            <!-- 选项将根据类别动态插入 -->
+        </select>
     </div>
     <div class="form-group">
-    <label for="money">金额:</label>
-    <input type="text" id="money" name="money" placeholder="请输入金额" oninput="validateMoneyInput(this)">
+        <label for="money">金额:</label>
+        <input type="text" id="money" name="money" placeholder="请输入金额" oninput="validateMoneyInput(this)">
     </div>
     <div class="form-group">
-    <label for="detail">备注:</label>
-    <input type="text" id="detail" name="detail" placeholder="请输入备注">
+        <label for="detail">备注:</label>
+        <input type="text" id="detail" name="detail" placeholder="请输入备注">
     </div>
     <button type="submit" onclick="closeIframeLayer()">提交记录</button>
 </form>
@@ -158,7 +162,8 @@
         category: document.getElementById('category').value,
         type: document.getElementById('type').value,
         money: document.getElementById('money').value,
-        detail: document.getElementById('detail').value
+        detail: document.getElementById('detail').value,
+        dateTime: document.getElementById('dateTime').value
     };
         var index = parent.layer.getFrameIndex(window.name);
         parent.layer.iframeAuto(index); // 确保iframe自适应大小

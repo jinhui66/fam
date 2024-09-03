@@ -7,6 +7,7 @@ import json
 import os
 import time
 import plotly.graph_objects as go
+from datetime import datetime
 
 
 bp = Blueprint('user',__name__,url_prefix="/")
@@ -28,9 +29,12 @@ def get_users():
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -65,9 +69,11 @@ def users_in():
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -104,9 +110,11 @@ def users_out():
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -197,9 +205,12 @@ def type(output):
             is_in = '支出'
         else:
             is_in = '收入'
+
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -234,9 +245,11 @@ def type_in(output):
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -273,9 +286,11 @@ def type_out(output):
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -312,9 +327,11 @@ def category(output):
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -350,9 +367,11 @@ def category_in(output):
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -388,9 +407,11 @@ def category_out(output):
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[4]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[4],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -425,10 +446,13 @@ def receive_add_data():
     type = data.get('type')
     money = data.get('money')
     detail = data.get('detail')
+    dateTime = data.get('dateTime')
     user_id = session.get('user_id')
+
+    # print(dateTime)
     # print('receive')
-    sql = text('insert into USER_INOUT(Uid,UImoney,Tid,UIdetail,UIisin) value(:user_id,:money,:type,:detail,:is_in)')
-    db.session.execute(sql,{'user_id':user_id,'money':money,'type':type,'detail':detail,'is_in':is_in})
+    sql = text('insert into USER_INOUT(Uid,UImoney,Tid,UIdetail,UIisin,UIdate) value(:user_id,:money,:type,:detail,:is_in,:dateTime)')
+    db.session.execute(sql,{'user_id':user_id,'money':money,'type':type,'detail':detail,'is_in':is_in,'dateTime':dateTime})
     db.session.commit()
     # print('11')
     return jsonify({'status':'success'})

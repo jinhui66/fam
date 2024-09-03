@@ -52,6 +52,10 @@
 <h2>收支记录表单</h2>
 <form id="expenseForm" onsubmit="return handleSubmit();">
     <div class="form-group">
+        <label for="dateTime">日期和时间:</label>
+        <input type="datetime-local" id="dateTime" name="dateTime" required>
+    </div>
+    <div class="form-group">
     <label for="is_in">收入/支出:</label>
     <select id="is_in" name="is_in" onchange="updateOptions()">
         <option value="支出">支出</option>
@@ -158,7 +162,8 @@
         category: document.getElementById('category').value,
         type: document.getElementById('type').value,
         money: document.getElementById('money').value,
-        detail: document.getElementById('detail').value
+        detail: document.getElementById('detail').value,
+        dateTime: document.getElementById('dateTime').value
     };
         var index = parent.layer.getFrameIndex(window.name);
         parent.layer.iframeAuto(index); // 确保iframe自适应大小

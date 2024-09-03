@@ -7,7 +7,7 @@ import json
 import os
 import time
 import plotly.graph_objects as go
-
+from datetime import datetime
 
 bp = Blueprint('family',__name__,url_prefix="/")
 
@@ -29,9 +29,11 @@ def family_type(output):
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[5]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[5],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -60,9 +62,11 @@ def family_category(output):
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[5]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[5],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -92,9 +96,11 @@ def family_data2():
         else:
             is_in = '收入'
 
+        python_datetime = datetime.strptime(str(row[5]), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')
+
         list.append({
             "id": row[0],
-            "time": row[5],
+            "time": python_datetime,
             "is_in": is_in,
             "category": category,
             "type": type,# type
@@ -155,16 +161,13 @@ def get_invited_family():
     result = db.session.execute(sql,{'user_id':user_id}).fetchall()
     # print(result)
     list = []
-    if result == []:
-        list.append()
-    else:
-        for row in result:
-            list.append({
-                "id": row[0],
-                "name": row[1],
-                "date": row[2],
-                'FRid': row[3]
-            })
+    for row in result:
+        list.append({
+            "id": row[0],
+            "name": row[1],
+            "date": row[2],
+            'FRid': row[3]
+        })
         # print(result)
         # print(list)
     return jsonify(list)
@@ -175,16 +178,12 @@ def family_list():
     sql = text('select * from FAMILY F join FAMILY_USER FU on F.Fid = FU.Fid where Uid = :user_id;')
     result = db.session.execute(sql,{'user_id':user_id}).fetchall()
     list = []
-    if result == []:
-        list.append()
-    else:
-
-        for row in result:
-            list.append({
-                "id": row[0],
-                "name": row[1],
-                "date": row[2]
-            })
+    for row in result:
+        list.append({
+            "id": row[0],
+            "name": row[1],
+            "date": row[2]
+        })
         # print(result)
     # print(list)
     return jsonify(list)
@@ -223,11 +222,6 @@ def delete_family(id):
     # print(id)
     return  '数据删除成功', 200
 
-@bp.route('/change_family',methods=['POST','get'])
-def change_family():
-    data = request.get_json()
-    # print(data)
-    return 1
 
 @bp.route('/get_in_family/<family_id>',methods=['GET','POST'])
 def get_in_family(family_id):
@@ -253,10 +247,12 @@ def receive_total_add_data():
     type = data.get('type')
     money = data.get('money')
     detail = data.get('detail')
+    dateTime = data.get('dateTime')
+
     user_id = session.get('user_id')
     # print('receive')
-    sql = text('insert into FAMILY_INOUT(Fid,Uid,FImoney,Tid,FIdetail,FIisin) value(:family_id, :user_id,:money,:type,:detail,:is_in)')
-    db.session.execute(sql,{'family_id':family_id,'user_id':user_id,'money':money,'type':type,'detail':detail,'is_in':is_in})
+    sql = text('insert into FAMILY_INOUT(Fid,Uid,FImoney,Tid,FIdetail,FIisin,FIdate) value(:family_id, :user_id,:money,:type,:detail,:is_in,:dateTime)')
+    db.session.execute(sql,{'family_id':family_id,'user_id':user_id,'money':money,'type':type,'detail':detail,'is_in':is_in,'dateTime':dateTime})
     db.session.commit()
     # print('11')
     return jsonify({'status':'success'})
@@ -326,7 +322,11 @@ def family_menu(family_id):
     plot_div4 = fig4.to_html(full_html=False, include_plotlyjs='cdn')
 
 
-    return render_template('family_menu.html',family_id=family_id, plot_div1=plot_div1, plot_div2=plot_div2, plot_div3=plot_div3, plot_div4=plot_div4)
+    sql = text('select sum(TotalMoney) from FAMILY_INOUT_SUM where Fid = :family_id and FIisin = :isin')
+    asset_in = db.session.execute(sql,{'family_id':family_id, 'isin':1}).fetchone()
+    asset_out = db.session.execute(sql,{'family_id':family_id, 'isin':0}).fetchone()
+    asset = asset_in[0] - asset_out[0]
+    return render_template('family_menu.html',family_id=family_id, plot_div1=plot_div1, plot_div2=plot_div2, plot_div3=plot_div3, plot_div4=plot_div4, asset = asset)
 
 # 邀请进入家庭
 @bp.route('/invite_family_action',methods=['GET','POST'])
