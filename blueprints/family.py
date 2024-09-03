@@ -329,7 +329,8 @@ def family_menu(family_id):
     asset_in = db.session.execute(sql,{'family_id':family_id, 'isin':1}).fetchone()
     asset_out = db.session.execute(sql,{'family_id':family_id, 'isin':0}).fetchone()
     asset = asset_in[0] - asset_out[0]
-    return render_template('family_menu.html',family_id=family_id, plot_div1=plot_div1, plot_div2=plot_div2, plot_div3=plot_div3, plot_div4=plot_div4, asset = asset)
+    # print(asset_in[0])
+    return render_template('family_menu.html',family_id=family_id, plot_div1=plot_div1, plot_div2=plot_div2, plot_div3=plot_div3, plot_div4=plot_div4, asset =  asset, asset_in = asset_in[0], asset_out = asset_out[0])
 
 # 邀请进入家庭
 @bp.route('/invite_family_action',methods=['GET','POST'])
