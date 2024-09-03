@@ -198,11 +198,7 @@ def family_data1():
     total = db.session.execute(sql,{'family_id':family_id}).fetchone()
 
     print(total)
-    list = [{
-            'name': '###总和###',
-            'in': total[1],
-            'out': total[0]
-    }]
+    list = []
     for row in result:
         list.append({
             'name': row[2],
