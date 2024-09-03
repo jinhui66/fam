@@ -119,7 +119,6 @@ def change_total():
     money = data.get('money')
     detail = data.get('detail')
     id = data.get('id')
-
     sql = text('update FAMILY_INOUT set FImoney=:money, FIdetail=:detail where FIid = :id')
     db.session.execute(sql,{'money':money,'detail':detail,'id':id})
     db.session.commit()
@@ -194,16 +193,23 @@ def family_list():
 def family_data1():
     family_id = session.get('family_id')
     sql = text('select * from FAMILY_USER_INOUT where FamilyID = :family_id')
-    result = db.session.execute(sql,{'family_id':family_id})
-    list = []
+    result = db.session.execute(sql,{'family_id':family_id}).fetchall()
+
+    sql = text('select sum(TotalIn), sum(TotalOut) from FAMILY_USER_INOUT where FamilyID = :family_id')
+    total = db.session.execute(sql,{'family_id':family_id}).fetchone()
+
+    print(total)
+    list = [{
+            'name': '###总和###',
+            'in': total[1],
+            'out': total[0]
+    }]
     for row in result:
         list.append({
             'name': row[2],
             'in': row[4],
             'out': row[3]
         })
-
-
     return jsonify(list)
 
 
@@ -300,7 +306,7 @@ def family_menu(family_id):
         labels.append(row[0])
         values.append(row[1])
     # 创建饼状图
-    fig3 = go.Figure(data=[go.Pie(labels=labels, values=values, title='收入')])
+    fig3 = go.Figure(data=[go.Pie(labels=labels, values=values, title='支出')])
     # 将饼状图转换为HTML
     plot_div3 = fig3.to_html(full_html=False, include_plotlyjs='cdn')
     # print(plot_div1)
