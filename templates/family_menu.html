@@ -166,14 +166,20 @@ function sendDataToServer(value) {
     })
     .then(response => response.json()) // 解析JSON格式的响应体
     .then(data => {
-        console.log('Success');
-        var table = layui.table;
 
-        fetchData2('/family_data2');
 
-        setTimeout(function() {
-            reloadTable('test2',globalData2);
-        }, 1000);
+        if (data.status == 'success') {
+            console.log('Success');
+            var table = layui.table;
+
+            fetchData2('/family_data2');
+
+            setTimeout(function() {
+                reloadTable('test2',globalData2);
+            }, 1000);
+        } else {
+            alert(data.message);
+        }
 
         // 这里可以添加成功提交后的处理逻辑
     })

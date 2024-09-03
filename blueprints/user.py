@@ -448,7 +448,8 @@ def receive_add_data():
     detail = data.get('detail')
     dateTime = data.get('dateTime')
     user_id = session.get('user_id')
-
+    if dateTime == '':
+        return jsonify({'status':'','message':'请选择时间'})
     # print(dateTime)
     # print('receive')
     sql = text('insert into USER_INOUT(Uid,UImoney,Tid,UIdetail,UIisin,UIdate) value(:user_id,:money,:type,:detail,:is_in,:dateTime)')

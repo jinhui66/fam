@@ -68,9 +68,15 @@ function sendDataToServer(value) {
     })
     .then(response => response.json()) // 解析JSON格式的响应体
     .then(data => {
-        console.log('Success');
-        var table = layui.table;
-        table.reload('test', {url: '/users'});
+        if (data.status == 'success') {
+            // 登录成功，跳转到menu.html
+            console.log('Success');
+            var table = layui.table;
+            table.reload('test', {url: '/users'});
+        } else {
+            alert(data.message);
+        }
+
 
         // 这里可以添加成功提交后的处理逻辑
     })
@@ -90,7 +96,6 @@ function deleteData(id) {
   })
   .then(response => {
     if (response.ok) {
-      alert('数据删除成功！');
       // 可以在这里添加其他逻辑，比如更新页面
     } else {
       alert('数据删除失败！');
@@ -139,7 +144,6 @@ function deleteData(id) {
 </script>
 <script type="text/html" id="barDemo">
   <div class="layui-clear-space">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-xs" lay-event="more">
       更多
       <i class="layui-icon layui-icon-down"></i>
@@ -169,7 +173,7 @@ var url = '/users';
     totalRow: true, // 开启合计行
     page: false,
     cols: [[
-        {fixed: 'left', title:'操作', width: 134, minWidth: 125, toolbar: '#barDemo'},
+        {fixed: 'left', title:'操作', width: 80, minWidth: 125, toolbar: '#barDemo'},
         {field: 'time', title: '时间'},
         {field: 'is_in', title: '收入/支出'},
         {field: 'category', title: '类别'},

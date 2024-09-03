@@ -249,6 +249,9 @@ def receive_total_add_data():
     detail = data.get('detail')
     dateTime = data.get('dateTime')
 
+    if dateTime == '':
+        return jsonify({'status':'','message':'请选择时间'})
+
     user_id = session.get('user_id')
     # print('receive')
     sql = text('insert into FAMILY_INOUT(Fid,Uid,FImoney,Tid,FIdetail,FIisin,FIdate) value(:family_id, :user_id,:money,:type,:detail,:is_in,:dateTime)')
