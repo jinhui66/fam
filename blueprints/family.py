@@ -199,8 +199,8 @@ def family_data1():
     for row in result:
         list.append({
             'name': row[2],
-            'in': row[3],
-            'out': row[4]
+            'in': row[4],
+            'out': row[3]
         })
 
 

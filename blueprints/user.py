@@ -181,10 +181,9 @@ def change():
     db.session.commit()
     return jsonify({'status':'success'})
 
-
+# 按照类别进行筛选
 @bp.route('/type/<output>',methods=['POST','get'])
 def type(output):
-    # print(output)
     user_id = session.get('user_id')
     sql = text('select * from USER_INOUT UI join TYPE T on T.Tid = UI.Tid where :output = T.Tid and UI.Uid = :user_id ORDER BY UIid DESC;')
     result = db.session.execute(sql,{'output':output,'user_id':user_id}).fetchall()
@@ -194,12 +193,10 @@ def type(output):
         zhonglei = db.session.execute(sql,{'Tid':row[3]}).fetchone()
         type = zhonglei[0]
         category = zhonglei[1]
-
         if row[6] == 0:
             is_in = '支出'
         else:
             is_in = '收入'
-
         list.append({
             "id": row[0],
             "time": row[4],
@@ -209,8 +206,6 @@ def type(output):
             "money": row[2],
             "detail": row[5]
         })
-    # print(list)
-
     response = {
         "code": 0,  # 成功状态码
         "msg": "",  # 消息字段

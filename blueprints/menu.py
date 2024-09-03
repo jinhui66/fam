@@ -21,9 +21,9 @@ def menu():
 def login():
     return render_template('login.html')
 
+# 登录操作
 @bp.route('/login_action',methods=['GET','POST'])
 def login_action():
-
     if request.method == 'GET':
         pass
     else:
@@ -32,17 +32,12 @@ def login_action():
         password = data.get('password')
         if not account or not password:
             return jsonify({'status':'', 'message':'请填写完整'})
-        # print(type(account),"ddddddd")
-        # print(account,password,1221212)
-        # get_user = User.query.filter_by(email=email).first()
         # 使用原生SQL查询数据
         sql = text('SELECT * FROM USER WHERE Uaccount = :account')
         get_user = db.session.execute(sql, {'account': account}).fetchone()
         print(2)
         if get_user is not None:
             session['user_id'] = get_user.Uid
-            # password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-            print(password)
             if(get_user.Upassword == password):
                 print('success')
                 return jsonify({'status':'success', 'message':''})
