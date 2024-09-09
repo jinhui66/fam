@@ -13,6 +13,9 @@ conda env create --file environment.yaml
 ```
 # 自己进行配置
 SECRET_KEY = '123456'
+host = '127.0.0.1' 
+port = 5000
+
 # 数据库的配置信息
 HOSTNAME = ""
 PORT = 3306
